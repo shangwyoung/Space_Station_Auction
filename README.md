@@ -1,5 +1,17 @@
-# Space_Station_Auction
-WT 2016
+# Space Station Auction
+This is intended as a contest a la the critter tournament, except it would be open to all students, not just 150, and I like the idea of moving away from a combat-oriented contest.  
+
+The game will involve an a sequence of auctions in which each player attempts to acquire modules (cards) with which to build the best starbase in the galaxy. (The starbase theme is pretty irrelevant.  We can make it about making an awesome amusement park, or robot butler, or whatever you folks want.)  
+
+Bidding agents will be written in Python.  That keeps it open to students who have only had 150 (or even 140, if we get around to offering that again).  
+
+## Oberlin College Winter Term 2016
+Tom Wexler  
+Jun Li  
+Nicholas Music  
+Sage Vouse  
+Aaron Young  
+Luxing Zhang  
 
 ## Version Control
 
