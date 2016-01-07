@@ -15,6 +15,10 @@ Luxing Zhang
 
 ## Version Control
 
+To get started, clone this repository on your local machine:
+
+        git clone https://github.com/aarony422/Space_Station_Auction.git
+
 Please do not commit directly to the master branch, unless it's absolutely necessary and ok to do so.
 
 Start a feature branch and do enough testing. When you're done, submit a pull request on github.
