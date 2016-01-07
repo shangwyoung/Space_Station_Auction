@@ -26,6 +26,19 @@ Start a feature branch and do enough testing. When you're done, submit a pull re
 Use the following command to make a new branch:
 
         git checkout -b [new-branch-name]
+        
+After you've made changes and want to commit your changes:
+
+        git add -A
+        git commit -m "[commit message]"
+
+To push your changes to the branch you created on origin (github):
+
+        git push origin [branch-name]
+        
+You can checkout a branch someone else created:
+
+        git checkout [branch-name]
 
 To see the differences between the current branch you are on and origin/master, do:
 
