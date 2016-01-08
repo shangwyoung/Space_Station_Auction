@@ -10,12 +10,12 @@ class Card:
         return self.stats
 
     def getValue(self, index):
-        retun self.card[index]
+        return self.stats[index]
 
     def __repr__(self):
-        return("[" + self.card[0] +
-               ", " + str(self.card[1]) +
-               ", " + str(self.card[2]) +
-               ", " + str(self.card[3]) +
-               ", " + str(self.card[4]) +
-               ", " + str(self.card[5]) + "]\n")
+        return("[" + self.name +
+               ", " + str(self.stats[0]) +
+               ", " + str(self.stats[1]) +
+               ", " + str(self.stats[2]) +
+               ", " + str(self.stats[3]) +
+               ", " + str(self.stats[4]) + "]")
