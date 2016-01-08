@@ -33,6 +33,13 @@ You can also checkout a branch someone else created:
 
         git checkout [branch-name]
 
+#### Status
+Check the status of your working directory:
+
+        git status
+        
+to see the status of the files in your working directory.
+
 #### Staging and Committing Changes Locally
 After you've made changes and want to stage your changes:
 
