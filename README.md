@@ -32,28 +32,24 @@ After you've made changes and want to commit your changes:
         git add -A
         git commit -m "[commit message]"
 
-To push your changes to the branch you created on origin (github):
+To push your changes to the branch you created to origin (github):
 
         git push origin [branch-name]
         
 You can checkout a branch someone else created:
 
         git checkout [branch-name]
-
-To see the differences between the current branch you are on and origin/master, do:
-
-        git diff origin/master
-
+        
 To merge changes in master to your current branch, do:
 
         git pull
         git merge master
 
-When you're done committing all your changes, push the changes to your branch remotely:
+To see the differences between the current branch you are on and origin/master, do:
 
-        git push origin [branch-name]
+        git diff origin/master
 
-Then you can go to github and submit a merge request by pressing the button
+When you're done committing all your changes, and pushed the changes to your branch remotely, you can go to github and submit a merge request by pressing the button
 
 To view difference between two branches, do:
 
@@ -62,5 +58,3 @@ To view difference between two branches, do:
 For example, you can do:
 
         git diff origin/master origin/[my-branch]
-
-
