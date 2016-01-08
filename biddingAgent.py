@@ -26,6 +26,7 @@ class biddingAgent:
         pass
     """
 
+    # 0.1 sec time limit
     # Called for each auctioned card. Give your bid for the current card
     # @param card The next card (object) up for auction
     # @param index The index of the card in the auction
@@ -33,6 +34,7 @@ class biddingAgent:
     def getBid(self, card, index):
         pass
 
+    # 0.1 sec time limit
     # Used by the system to inform your agent of the results of each auction
     # Record any useful information and update your budget if you won.
     # @param The now sold card
