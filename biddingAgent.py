@@ -1,6 +1,6 @@
 class biddingAgent:
 
-    def __init__(self): #what args do we need?
+    def __init__(self, cards, ID, players, budget):
         pass
 
     # Give the name that will be displayed for your agent
@@ -21,8 +21,10 @@ class biddingAgent:
     # @param ID Your agent's index
     # @param players The total number of players
     # @param budget Starting budget
+    """
     def init(self, cards, ID, players, budget):
         pass
+    """
 
     # Called for each auctioned card. Give your bid for the current card
     # @param card The next card (object) up for auction
