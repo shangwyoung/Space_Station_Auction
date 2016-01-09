@@ -17,15 +17,15 @@ class SpaceStation:
     def getCards(self):
         return self.cards
 
+    def getScores(self):
+        return self.scores
+
     # adds a card to the list of won cards and increases the scores of the
     # categories that appear on the card
     def addCard(self, card):
         self.cards.append(card)
         for i in range(0,5):
             self.scores[i] += card.getValue(i)
-
-    def getScores(self):
-        return self.scores
 
     def __repr__(self):
         return(self.name + "'s Space Station: [" +
