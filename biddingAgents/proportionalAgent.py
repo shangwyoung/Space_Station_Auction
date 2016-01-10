@@ -1,24 +1,30 @@
 import random
 import biddingAgent
 
-class RandomBiddingAgent(biddingAgent.biddingAgent):
+class ProportionalBiddingAgent(biddingAgent.biddingAgent):
     def __init__(self, cards, ID, players, budget):
         self.ID = ID
         self.budget = budget
+        self.total = 0
+
+        for card in cards:
+            total += sum(card.getStats())
 
     def getName(self):
-        return "Random Bidding Agent"
+        return "Proportional Bidding Agent"
 
     def getColor(self):
-        return "Blue"
+        return "Green"
 
     # def init(self, cards, ID, players, budget):
     #    pass
 
     def getBid(self, card, index):
-        return random.randint(0, self.budget)
+        cardVal = sum(card.getStats())
+        return (self.budget*cardVal)//self.total
 
     def seeResults(self, card, winner, price, bids):
+        self.total -= sum(card.getStats())
         if winner == self.ID:
             self.budget -= price
 
