@@ -3,7 +3,7 @@ import card
 class SpaceStation:
     # name and ID correspond to the player who is building the SpaceStation
     def __init__(self, name, ID):
-        slef.name = name
+        self.name = name
         self.ID = ID
         self.cards = []
         self.scores = [0,0,0,0,0]
