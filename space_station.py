@@ -7,6 +7,7 @@ class SpaceStation:
         self.ID = ID
         self.cards = []
         self.scores = [0,0,0,0,0]
+        self.rankScore = 0
 
     def getName(self):
         return self.name
@@ -23,18 +24,17 @@ class SpaceStation:
     def getScores(self):
         return self.scores
 
-    def sumScores(self):
-        x = 0
-        for score in self.scores:
-            x += score
-        return x
+    def getRank(self):
+        return self.rankScore
 
     # adds a card to the list of won cards and increases the scores of the
     # categories that appear on the card
     def addCard(self, card):
         self.cards.append(card)
         for i in range(0,5):
-            self.scores[i] += card.getValue(i)
+            x = card.getValue[i]
+            self.scores[i] += x
+            self.rankScore += x
 
     def __repr__(self):
         return(self.name + "'s Space Station: [" +
