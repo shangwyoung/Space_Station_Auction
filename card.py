@@ -2,6 +2,9 @@ class Card:
     def __init__(self, name, stats):
         self.name = name
         self.stats = stats
+    
+    def getList(self):
+        return self.stats
 
     def getName(self):
         return self.name
