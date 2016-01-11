@@ -17,8 +17,17 @@ class SpaceStation:
     def getCards(self):
         return self.cards
 
+    def getValue(self, index):
+        return self.scores[index]
+
     def getScores(self):
         return self.scores
+
+    def sumScores(self):
+        x = 0
+        for score in self.scores:
+            x += score
+        return x
 
     # adds a card to the list of won cards and increases the scores of the
     # categories that appear on the card
