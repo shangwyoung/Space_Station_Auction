@@ -32,7 +32,7 @@ class SpaceStation:
     def addCard(self, card):
         self.cards.append(card)
         for i in range(0,5):
-            x = card.getValue[i]
+            x = card.getValue(i)
             self.scores[i] += x
             self.rankScore += x
 
