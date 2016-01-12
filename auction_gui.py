@@ -40,7 +40,7 @@ middle.pack(side=LEFT, fill=BOTH, expand=1)
 
 picture = Canvas(middle, bg = "red")
 
-img = PhotoImage(file="starry-sky-of-bretagne.gif")
+img = PhotoImage(file="background.gif")
 picture.create_image(0,0, anchor=NW, image=img)
 
 picture.pack(fill=BOTH, expand=1)
