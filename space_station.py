@@ -18,7 +18,8 @@ class SpaceStation:
         return self.cards
  
     def getScores(self):
-        return self.scores
+        return ("["+str(self.scores[0])+" "+str(self.scores[1])+" "+str(self.scores[2])+" "+str(self.scores[3])+" "+str(self.scores[4])+"]")
+        #return self.scores
  
     # adds a card to the list of won cards and increases the scores of the
     # categories that appear on the card

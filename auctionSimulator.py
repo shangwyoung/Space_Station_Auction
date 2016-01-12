@@ -46,7 +46,7 @@ CATAGORIES = ["Science", "Ecology", "Culture", "Commerce", "Industry"]
 ##        signal.setitimer(signal.ITIMER_REAL, 0)
 
 
-##finds all classes in the given directory that are subclasses
+#finds all classes in the given directory that are subclasses
 #of biddingAgent
 def get_agent_classes(directory = "agents"):
     modules = [file_name[:-3] for file_name in os.listdir(directory) if file_name.endswith('.py')]
@@ -214,22 +214,17 @@ def main():
     num_agents = len(agent_classes)
 
     #set up car generator
-    card_generator = NickCardGenerator.NickCardGenerator(10, "name")
-    cards = card_generator.buildDeck()
+    card_generator = NickCardGenerator.NickCardGenerator(10)
+    #cards = card_generator.buildDeck()
 
-    for i in range(0, 10):
-        print(cards[i].getValue(0)+cards[i].getValue(1))
-        
-    print(cards[9].getName())
     
     
     for rnd in range(NUM_ROUNDS):
         
         #set up round
         #cards = generate_cards(num_agents*CARDS_PER_AGENT, rnd)
+        cards = card_generator.buildDeck()
         UI.on_round_started(rnd, cards)
-
-        
         
         agents = make_bidding_agents(agent_classes, cards, STARTING_BUDGET);
         space_stations = make_space_stations(agents)
@@ -240,6 +235,7 @@ def main():
         for i in range(len(cards)):
             bids = get_bids(cards[i], i, agents, budgets)
             winner = give_results(bids, agents, cards[i], budgets)
+            space_stations[winner].addCard(cards[i])
             
             if winner in cards_won:
                 cards_won[winner].append(cards[i])
@@ -249,8 +245,13 @@ def main():
         
         #do scoring
         calculate_scores(cards_won, num_agents)
+
+        
     
+
     UI.on_game_finished()
+    for i in range(num_agents):
+        print(str(space_stations[i].getName())+space_stations[i].getScores())
 
 main()
     
