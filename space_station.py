@@ -27,6 +27,10 @@ class SpaceStation:
     def getRank(self):
         return self.rankScore
 
+    def incrementRankScore(self, amount):
+        if amount > 0:
+            self.rankScore += amount
+
     # adds a card to the list of won cards and increases the scores of the
     # categories that appear on the card
     def addCard(self, card):
@@ -34,7 +38,6 @@ class SpaceStation:
         for i in range(0,5):
             x = card.getValue(i)
             self.scores[i] += x
-            self.rankScore += x
 
     def __repr__(self):
         return(self.name + "'s Space Station: [" +
