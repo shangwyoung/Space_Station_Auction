@@ -32,17 +32,18 @@ class AuctionGUI():
         self.S.config(command=self.T.yview)
         self.T.config(yscrollcommand=self.S.set)
 
-        self.T.config(state=NORMAL)
-        self.T.insert(END, "player5 bought 'Puppy Cloning Center' for $65")
-        self.T.config(state=DISABLED)
-
         # canvas for player info, graph, etc
-        self.graph = Canvas(self.left, bg="black")
+        self.graph = Canvas(self.left, bg="black", scrollregion=[0,0,2592,1728])
 
         self.img = PhotoImage(file="background.gif")
         self.graph.create_image(0,0, anchor=NW, image=self.img)
 
         self.graph.pack(side=TOP, fill=BOTH, expand=1)
+
+        self.graph_scroll = Scrollbar(self.left, orient=HORIZONTAL,
+                command=self.graph.xview)
+        self.graph_scroll.pack(side=TOP, fill=X)
+        self.graph.config(xscrollcommand=self.graph_scroll.set)
 
         # buttons
         self.buttons = Frame(self.left, bg="grey", bd=5)
@@ -79,7 +80,9 @@ class AuctionGUI():
         self.draw_card()
         self.update_queue()
         self.update_info()
-        
+
+    # I think this method should probably take card as an arg instead of
+    # searching the deck within the method, but we can discuss this
     def draw_card(self):
         if self.deck[0]:
             card = self.deck[0]
@@ -90,7 +93,6 @@ class AuctionGUI():
             self.current.create_arc(5,178,17,195, start=180, extent=90, style=ARC, outline="white")
             """
             self.current.create_rectangle(5,5,190,200, fill="#19334d", outline="#00e5e6", width=10)
-            #self.current.create_rectangle(35,35,300,400, fill="#19334d")
             self.current.create_text(95,20, anchor=N, fill="#00e5e6", width =150,
                         text=card.getName(), font=("Helvetica", "16"),
                         justify=CENTER)
@@ -104,6 +106,12 @@ class AuctionGUI():
                         justify=CENTER)
             self.deck.remove(self.deck[0])
 
+    def add_history(self, message):
+        self.T.config(state=NORMAL)
+        self.T.insert(END, "\n" + message)
+        self.T.see(END)
+        self.T.config(state=DISABLED)
+
     def update_queue(self):
         pass
 
@@ -114,7 +122,11 @@ class AuctionGUI():
 def main():
     gui = AuctionGUI(180, 190)
     gui.initialize_graphics()
-    #gui.make_buttons()
+    gui.add_history("player5 won 'Puppy Cloning Center' for $100")
+    gui.add_history("There was a tie for best bid, but player2 won 'Defensive Weapons Array' for $85")
+    gui.add_history("player2 won 'Emergency Escape Pod' for $95")
+    gui.add_history("player7 won 'Oxygen Farm' for $300")
+    gui.add_history("player0 won 'Interstellar Party Beacon' for $250")
     gui.root.mainloop()
 
 main()
