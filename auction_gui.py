@@ -1,5 +1,5 @@
 from tkinter import *
-import FinishedCardGenerator
+import card_generator
 import card
 
 class AuctionGUI():
@@ -7,7 +7,7 @@ class AuctionGUI():
     def __init__(self, width, height):
         self.wide = width
         self.high = height
-        self.deck = FinishedCardGenerator.buildDeck(40)
+        self.deck = card_generator.buildDeck(40)
 
     def initialize_graphics(self):
 
