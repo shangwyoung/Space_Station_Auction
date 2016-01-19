@@ -7,7 +7,7 @@ class AuctionGUI():
     def __init__(self, width, height):
         self.wide = width
         self.high = height
-        self.deck = buildDeck(40)
+        self.deck = FinishedCardGenerator.buildDeck(40)
 
     def initialize_graphics(self):
 
