@@ -1,5 +1,5 @@
 from tkinter import *
-import NickCardGenerator
+import FinishedCardGenerator
 import card
 
 class AuctionGUI():
@@ -7,8 +7,7 @@ class AuctionGUI():
     def __init__(self, width, height):
         self.wide = width
         self.high = height
-        self.generator = NickCardGenerator.NickCardGenerator(10)
-        self.deck = self.generator.buildDeck()
+        self.deck = buildDeck(40)
 
     def initialize_graphics(self):
 
@@ -87,6 +86,8 @@ class AuctionGUI():
         if self.deck[0]:
             card = self.deck[0]
             """
+            for rounded card later
+
             self.current.create_arc(5,5,17,17, start=90, extent=90, outline="white")
             self.current.create_arc(173,5,185,17, start=0, extent=90, style=ARC, outline="white")
             self.current.create_arc(173,178,185,195, start=270, extent=90, style=ARC, outline="white")
@@ -97,11 +98,11 @@ class AuctionGUI():
                         text=card.getName(), font=("Helvetica", "16"),
                         justify=CENTER)
             self.current.create_text(95,150, anchor=N, fill="#00e5e6", width =150,
-                        text="[" + str(card.getStats()[0]) +
-                   ", " + str(card.getStats()[1]) +
-                   ", " + str(card.getStats()[2]) +
-                   ", " + str(card.getStats()[3]) +
-                   ", " + str(card.getStats()[4]) + "]", 
+                        text="[" + str(card.getValue(0)) +
+                   ", " + str(card.getValue(1)) +
+                   ", " + str(card.getValue(2)) +
+                   ", " + str(card.getValue(3)) +
+                   ", " + str(card.getValue(4)) + "]", 
                         font=("Helvetica", "16"),
                         justify=CENTER)
             self.deck.remove(self.deck[0])
