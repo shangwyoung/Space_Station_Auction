@@ -50,18 +50,3 @@ def buildDeck(size):
         deck.append(genCard(prefCount,placeCount,suffCount))
 
     return deck
-
-def main():
-
-    size = 40
-    deck = buildDeck(size)
-
-    for i in range(0, size):
-        print(deck[i])
-
-    print(deck[0].getValue(1))
-    print(deck[1].getName())
-    print(deck[39].getStats())
-    
-
-main()
