@@ -1,5 +1,5 @@
 from tkinter import *
-import FinishedCardGenerator
+import card_generator
 import card
 
 class AuctionGUI():
@@ -7,7 +7,7 @@ class AuctionGUI():
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.deck = FinishedCardGenerator.buildDeck(40)
+        self.deck = card_generator.buildDeck(40)
 
     def initialize_graphics(self):
 
@@ -62,21 +62,21 @@ class AuctionGUI():
         self.quit_button.pack(side=LEFT)
         self.info_button.pack(side=RIGHT)
 
-        # test with mouse over legend
+        # bindings for [?] button
         self.info_button.bind('<Enter>', self.legend)
         self.info_button.bind('<Leave>', self.remove_legend)
 
         # *RIGHT PANEL*
-        self.right = Frame(self.root)
+        self.right = Frame(self.root, bd=0)
         self.right.pack(side=RIGHT, fill=Y)
 
         # current card
         self.current = Canvas(self.right, width =(self.width+10),
-                              height=(self.height+10), bg="black")
+                              height=(self.height+10), bg="black", bd=0)
         self.current.pack(side=TOP)
 
         #card queue
-        self.queue = Canvas(self.right, width=(self.width+10), bg="black")
+        self.queue = Canvas(self.right, width=(self.width+10), bg="black", bd=0)
         self.queue.pack(side=TOP, fill=Y, expand=1)
 
     def step(self):
@@ -85,23 +85,17 @@ class AuctionGUI():
         self.update_info()
 
     # I think this method should probably take card as an arg instead of
-    # searching the deck within the method, but we can discuss this
+    # searching the deck within the method, but we can discuss this -NM
     def draw_card(self):
         if self.deck[0]:
             card = self.deck[0]
-            """
-            for rounded card later
 
-            self.current.create_arc(5,5,17,17, start=90, extent=90, outline="white")
-            self.current.create_arc(173,5,185,17, start=0, extent=90, style=ARC, outline="white")
-            self.current.create_arc(173,178,185,195, start=270, extent=90, style=ARC, outline="white")
-            self.current.create_arc(5,178,17,195, start=180, extent=90, style=ARC, outline="white")
-            """
-            self.current.create_rectangle(5,5,190,200, fill="#19334d", outline="#00e5e6", width=10)
-            self.current.create_text(95,20, anchor=N, fill="#00e5e6", width =150,
+            self.create_rounded(self.current, 5, 5, 190,200, 30, 10, "#ffc34d", "#ffc34d")
+            self.create_rounded(self.current, 15, 15, 180,190, 20, 10, "#333399", "#333399")
+            self.current.create_text(95,20, anchor=N, fill="#ffc34d", width =150,
                         text=card.getName(), font=("Helvetica", "16"),
                         justify=CENTER)
-            self.current.create_text(95,150, anchor=N, fill="#00e5e6", width =150,
+            self.current.create_text(95,150, anchor=N, fill="#ffc34d", width =150,
                         text="[" + str(card.getValue(0)) +
                    ", " + str(card.getValue(1)) +
                    ", " + str(card.getValue(2)) +
@@ -111,9 +105,11 @@ class AuctionGUI():
                         justify=CENTER)
             self.deck.remove(self.deck[0])
 
+    # draws a reduced version of a card which only has the symbols and colors
     def draw_cardlet():
         pass
 
+    # adds a new line of text to the bid history window
     def add_history(self, message):
         self.T.config(state=NORMAL)
         self.T.insert(END, "\n" + message)
@@ -126,6 +122,7 @@ class AuctionGUI():
     def update_info(self):
         pass
 
+    # draws the legend which shows the icons for each of the 5 categories
     def legend(self, event):
         width = self.graph.winfo_width()
         height = self.graph.winfo_height()
@@ -137,7 +134,7 @@ class AuctionGUI():
         self.b = self.graph.create_text((x2-100), y1+(self.height*(1/6)), text="Science", anchor=W, font=("Helvetica", "12", "bold"))
         self.c = self.graph.create_text((x2-100), y1+(self.height*(2/6)), text="Ecology", anchor=W, font=("Helvetica", "12", "bold"))
         self.d = self.graph.create_text((x2-100), y1+(self.height*(3/6)), text="Culture", anchor=W, font=("Helvetica", "12", "bold"))
-        self.e =self.graph.create_text((x2-100), y1+(self.height*(4/6)), text="Commerce", anchor=W, font=("Helvetica", "12", "bold"))
+        self.e = self.graph.create_text((x2-100), y1+(self.height*(4/6)), text="Commerce", anchor=W, font=("Helvetica", "12", "bold"))
         self.f = self.graph.create_text((x2-100), y1+(self.height*(5/6)), text="Industry", anchor=W, font=("Helvetica", "12", "bold"))
 
         self.g = self.graph.create_oval((x2-150), y1+(self.height*(1/6))-10, (x2-130), y1+(self.height*(1/6))+10, fill="blue")
@@ -146,10 +143,27 @@ class AuctionGUI():
         self.j = self.graph.create_oval((x2-150), y1+(self.height*(4/6))-10, (x2-130), y1+(self.height*(4/6))+10, fill="yellow")
         self.k = self.graph.create_oval((x2-150), y1+(self.height*(5/6))-10, (x2-130), y1+(self.height*(5/6))+10, fill="red")
 
+    # removes all the canvas objects that make up the legend
     def remove_legend(self, event):
         self.graph.delete(self.a,self.b,self.c,self.d,self.e,
                           self.f,self.g,self.h,self.i,self.j,
                           self.k)
+
+    # draws a rounded rectangle. Format: (canvas, x1,y1,x2,y2, corner radius, border width, fill color)
+    def create_rounded(self, canvas, x1, y1, x2, y2, r, w, o, f):
+        canvas.create_arc(x1, y1, x1+r, y1+r, start=90, extent=90, style=PIESLICE, width=w, outline=o, fill=f)
+        canvas.create_arc(x2-r, y1, x2, y1+r, start=0, extent=90, style=PIESLICE, width=w, outline=o, fill=f)
+        canvas.create_arc(x1, y2-r, x1+r, y2, start=180, extent=90, style=PIESLICE, width=w, outline=o, fill=f)
+        canvas.create_arc(x2-r, y2-r, x2, y2, start=270, extent=90, style=PIESLICE, width=w, outline=o, fill=f)
+        
+        canvas.create_line(x1+r/2, y1, x2-r/2, y1, width=w, fill=o)
+        canvas.create_line(x1, y1+r/2, x1, y2-r/2, width=w, fill=o)
+        canvas.create_line(x1+r/2, y2, x2-r/2, y2, width=w, fill=o)
+        canvas.create_line(x2, y1+r/2, x2, y2-r/2, width=w, fill=o)
+
+        canvas.create_rectangle(x1+r/2-w/2, y1+w/2, x2-r/2+w/2, y2-w/2, fill=f, width=0)
+        canvas.create_rectangle(x1+w/2, y1+r/2-w/2, x2-w/2, y2-r/2+w/2, fill=f, width=0)
+        
         
 def main():
     gui = AuctionGUI(180, 190)
