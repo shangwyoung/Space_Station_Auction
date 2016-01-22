@@ -7,7 +7,7 @@ class AuctionGUI():
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.deck = card_generator.buildDeck(40)
+        self.deck = card_generator.buildDeck(10)
 
     def initialize_graphics(self):
 
@@ -80,34 +80,37 @@ class AuctionGUI():
         self.queue.pack(side=TOP, fill=Y, expand=1)
 
     def step(self):
-        self.draw_card()
-        self.update_queue()
+        self.advance_queue()
         self.update_info()
 
     # I think this method should probably take card as an arg instead of
     # searching the deck within the method, but we can discuss this -NM
-    def draw_card(self):
-        if self.deck[0]:
-            card = self.deck[0]
-
-            self.create_rounded(self.current, 5, 5, 190,200, 30, 10, "#ffc34d", "#ffc34d")
-            self.create_rounded(self.current, 15, 15, 180,190, 20, 10, "#333399", "#333399")
-            self.current.create_text(95,20, anchor=N, fill="#ffc34d", width =150,
-                        text=card.getName(), font=("Helvetica", "16"),
-                        justify=CENTER)
-            self.current.create_text(95,150, anchor=N, fill="#ffc34d", width =150,
-                        text="[" + str(card.getValue(0)) +
-                   ", " + str(card.getValue(1)) +
-                   ", " + str(card.getValue(2)) +
-                   ", " + str(card.getValue(3)) +
-                   ", " + str(card.getValue(4)) + "]", 
-                        font=("Helvetica", "16"),
-                        justify=CENTER)
-            self.deck.remove(self.deck[0])
+    def draw_card(self, card):
+        self.create_rounded(self.current, 5, 5, 190,200, 30, 10, "#ffc34d", "#ffc34d")
+        self.create_rounded(self.current, 15, 15, 180,190, 20, 10, "#333399", "#333399")
+        self.current.create_text(95,20, anchor=N, fill="#ffc34d", width =150,
+                                text=card.getName(), font=("Helvetica", "16"),
+                                justify=CENTER)
+        self.current.create_text(95,150, anchor=N, fill="#ffc34d", width =150,
+                                text=str(card.getStats()), 
+                                font=("Helvetica", "16"),
+                                justify=CENTER)
+        self.draw_cardlet(card, 0)
+        self.draw_cardlet(card, 1)
 
     # draws a reduced version of a card which only has the symbols and colors
-    def draw_cardlet():
-        pass
+    def draw_cardlet(self, card, index):
+        x = index*76
+        self.create_rounded(self.queue, 5,5+x,190,70+x, 30, 10, "#ffc34d", "#ffc34d")
+        self.create_rounded(self.queue, 15,15+x,180,60+x, 20, 10, "#333399", "#333399")
+        self.queue.create_text(95,25+x, anchor=N, fill="#ffc34d", width=150,
+                                 text=str(card.getStats()), font=("Helvetica", "16"),
+                                 justify=CENTER)
+
+    # draws a black cardlet over the cardlet at the given index
+    def erase_cardlet(self, index):
+        x = index*76
+        self.create_rounded(self.queue, 5,5+x,190,70+x, 30, 10, "black", "black")
 
     # adds a new line of text to the bid history window
     def add_history(self, message):
@@ -116,8 +119,15 @@ class AuctionGUI():
         self.T.see(END)
         self.T.config(state=DISABLED)
 
-    def update_queue(self):
-        pass
+    # draws the next card in the stack, removes it, and draws the remaining queue
+    def advance_queue(self):
+        if self.deck:
+            card = self.deck[0]
+            self.draw_card(card)
+            self.deck.remove(self.deck[0])
+            self.queue.delete(ALL)
+            for i in range(0, len(self.deck)):
+                self.draw_cardlet(self.deck[i], i)
 
     def update_info(self):
         pass
