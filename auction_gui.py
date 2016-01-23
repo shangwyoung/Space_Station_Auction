@@ -7,13 +7,29 @@ class AuctionGUI():
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.deck = card_generator.buildDeck(10)
+        self.deck = card_generator.buildDeck(100)
+        self.icons = [] #initialized below
+        self.colors = ['cyan','#8cff1a','#ff66ff','yellow','#ff6666']
+        #experimental
+        self.borders =['','cyan','#00b1b3','#3333ff','#009933','purple','grey','','#8cff1a','','yellow','','red','','','magenta','','','','', 'orange']
 
     def initialize_graphics(self):
 
         # ROOT WINDOW
         self.root = Tk()
         self.root.title("Space Station Auction!")
+
+        # Icons!
+        self.science = PhotoImage(file="science.gif")
+        self.ecology = PhotoImage(file="ecology.gif")
+        self.culture = PhotoImage(file="culture.gif")
+        self.commerce = PhotoImage(file="commerce.gif")
+        self.industry = PhotoImage(file="industry.gif")
+        self.icons.append(self.science)
+        self.icons.append(self.ecology)
+        self.icons.append(self.culture)
+        self.icons.append(self.commerce)
+        self.icons.append(self.industry)
 
         # *LEFT PANEL*
         self.left = Frame(self.root)
@@ -34,7 +50,7 @@ class AuctionGUI():
         # canvas for player info, graph, etc
         self.graph = Canvas(self.left, bg="black", scrollregion=[0,0,2592,1728])
 
-        self.img = PhotoImage(file="background.gif")
+        self.img = PhotoImage(file="background.ppm")
         self.graph.create_image(0,0, anchor=NW, image=self.img)
 
         self.graph.pack(side=TOP, fill=BOTH, expand=1)
@@ -71,46 +87,83 @@ class AuctionGUI():
         self.right.pack(side=RIGHT, fill=Y)
 
         # current card
-        self.current = Canvas(self.right, width =(self.width+10),
-                              height=(self.height+10), bg="black", bd=0)
+        self.current = Canvas(self.right, width =(self.width),
+                              height=(self.height), bg="black", bd=0)
         self.current.pack(side=TOP)
 
         #card queue
-        self.queue = Canvas(self.right, width=(self.width+10), bg="black", bd=0)
+        self.queue = Canvas(self.right, width=(self.width), bg="black", bd=0)
         self.queue.pack(side=TOP, fill=Y, expand=1)
 
     def step(self):
+        self.add_history(self.deck[0].getName() + " is now current. (TEST)")
         self.advance_queue()
-        self.update_info()
 
     # I think this method should probably take card as an arg instead of
     # searching the deck within the method, but we can discuss this -NM
     def draw_card(self, card):
-        self.create_rounded(self.current, 5, 5, 190,200, 30, 10, "#ffc34d", "#ffc34d")
-        self.create_rounded(self.current, 15, 15, 180,190, 20, 10, "#333399", "#333399")
-        self.current.create_text(95,20, anchor=N, fill="#ffc34d", width =150,
+        # consider seperate method for this (duplicated in draw_cardlet) or a card method.
+        num = 0
+        index1 = 0
+        index2 = 0
+        for i in range (0, len(card.getStats())):
+            if card.getValue(i) > 0:
+                num += 1
+                if num == 1:
+                    index1 = i
+                else:
+                    index2 = i
+        self.create_rounded(self.current, 0,0,180,190, 30, 1, "#202060", self.borders[(index1+1)*(index2+1)])# old color is "#ffc34d"
+        self.create_rounded(self.current, 10,10,170,180, 20, 0, "#202060", "#202060")
+        self.current.create_text(90,20, anchor=N, fill=self.borders[(index1+1)*(index2+1)], width =150,
                                 text=card.getName(), font=("Helvetica", "16"),
                                 justify=CENTER)
-        self.current.create_text(95,150, anchor=N, fill="#ffc34d", width =150,
-                                text=str(card.getStats()), 
-                                font=("Helvetica", "16"),
-                                justify=CENTER)
-        self.draw_cardlet(card, 0)
-        self.draw_cardlet(card, 1)
+        
+        if num == 1:
+            self.current.create_image(78,150, anchor=W, image=self.icons[index1])
+            self.current.create_text(76, 150, anchor=E, text=card.getValue(index1),
+                                     font=("Helvetica", "22"), fill=self.colors[index1])
+        else:
+            self.current.create_image(38,150, anchor=W, image=self.icons[index1])
+            self.current.create_text(36, 150, anchor=E, text=card.getValue(index1),
+                                     font=("Helvetica", "22"), fill=self.colors[index1])
+            self.current.create_image(118,150, anchor=W, image=self.icons[index2])
+            self.current.create_text(116, 150, anchor=E, text=card.getValue(index2),
+                                     font=("Helvetica", "22"), fill=self.colors[index2])
+                    
 
     # draws a reduced version of a card which only has the symbols and colors
     def draw_cardlet(self, card, index):
-        x = index*76
-        self.create_rounded(self.queue, 5,5+x,190,70+x, 30, 10, "#ffc34d", "#ffc34d")
-        self.create_rounded(self.queue, 15,15+x,180,60+x, 20, 10, "#333399", "#333399")
-        self.queue.create_text(95,25+x, anchor=N, fill="#ffc34d", width=150,
-                                 text=str(card.getStats()), font=("Helvetica", "16"),
-                                 justify=CENTER)
+        num = 0
+        index1 = 0
+        index2 = 0
+        for i in range (0, len(card.getStats())):
+            if card.getValue(i) > 0:
+                num += 1
+                if num == 1:
+                    index1 = i
+                else:
+                    index2 = i
+        y = index*78
+        self.create_rounded(self.queue, 0,y,180,76+y, 30, 1, "#202060", self.borders[(index1+1)*(index2+1)])
+        self.create_rounded(self.queue, 10,10+y,170,66+y, 20, 0, "#202060", "#202060")
+        
+        if num == 1:
+            self.queue.create_image(78,38+y, anchor=W, image=self.icons[index1])
+            self.queue.create_text(76, 38+y, anchor=E, text=card.getValue(index1),
+                                     font=("Helvetica", "22"), fill=self.colors[index1])
+        else:
+            self.queue.create_image(38,38+y, anchor=W, image=self.icons[index1])
+            self.queue.create_text(36, 38+y, anchor=E, text=card.getValue(index1),
+                                     font=("Helvetica", "22"), fill=self.colors[index1])
+            self.queue.create_image(118,38+y, anchor=W, image=self.icons[index2])
+            self.queue.create_text(116, 38+y, anchor=E, text=card.getValue(index2),
+                                     font=("Helvetica", "22"), fill=self.colors[index2])
 
-    # draws a black cardlet over the cardlet at the given index
+    # draws a black box over the cardlet at the given index
     def erase_cardlet(self, index):
-        x = index*76
-        self.create_rounded(self.queue, 5,5+x,190,70+x, 30, 10, "black", "black")
+        y = index*78
+        self.queue.create_rectangle(0,y,190,70+y, 30, 0, "black", "black")
 
     # adds a new line of text to the bid history window
     def add_history(self, message):
