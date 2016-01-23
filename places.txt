@@ -1,0 +1,12 @@
+Cannon
+Holodeck
+Hospital
+Laboratory
+Mega-Mall
+Observation Deck
+Oxygen Farm
+School
+Storage
+Transporter
+Warp Drive
+Weapons Array

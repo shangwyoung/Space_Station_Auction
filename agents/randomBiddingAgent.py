@@ -1,18 +1,22 @@
+import random
 import biddingAgent
 
-class agent1(biddingAgent.biddingAgent):
+class RandomBiddingAgent(biddingAgent.biddingAgent):
     def __init__(self, cards, ID, players, budget):
-        self.ID=ID
+        self.ID = ID
         self.budget = budget
 
     def getName(self):
-        return "A"
+        return "Random Bidding Agent"
 
     def getColor(self):
-        return "green"
+        return "Blue"
+
+    # def init(self, cards, ID, players, budget):
+    #    pass
 
     def getBid(self, card, index):
-        return 5000
+        return random.randint(0, self.budget)
 
     def seeResults(self, card, winner, price, bids):
         if winner == self.ID:
@@ -20,4 +24,6 @@ class agent1(biddingAgent.biddingAgent):
             
     def getBudget(self):
     	return self.budget
-    
+
+    def __repr__(self):
+        return self.__class__.__name__

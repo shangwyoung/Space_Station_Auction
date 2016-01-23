@@ -1,7 +1,8 @@
 import biddingAgent
 import card
-import NickCardGenerator
+import card_generator
 import space_station
+import auction_gui
 
 import user_interface
 import random
@@ -72,6 +73,7 @@ def make_bidding_agents(agent_classes, cards, budget):
     for i in range(len(agent_classes)):
         #with time_limit(5, i, "__init__"):
             agents[i] = agent_classes[i](cards, i, len(agent_classes), budget)
+            print(agents[i].getName())
     return agents
 
 #make space stations for each agent
@@ -79,10 +81,12 @@ def make_space_stations(agents):
     stations = [None]*len(agents)     
     for i in range(len(agents)):
         agent = agents[i]
+        #name = agent.getName()
         #with time_limit(5, i, "__init__"):
-        stations[i] = space_station.SpaceStation(agent.getName, i)
-        print(stations[i].getName())
-        print(stations[i].getID())
+        stations[i] = space_station.SpaceStation(agent.getName(), i)
+        #print(stations[i].getName())
+        #print(stations[i].getID())
+    GUI.add_stations(stations)
     return stations
 
 
@@ -142,6 +146,8 @@ def give_results(bids, agents, card, budgets):
         if agents[i]:
             #with time_limit(.1, i, "seeResults"):
                 agents[i].seeResults(card, winner, price, formatted_bids)
+
+    GUI.update_price(price)
     
     UI.on_auction_finished(card, winner, price)
     return winner
@@ -200,6 +206,11 @@ def calculate_scores(cards_won, num_agents):
             
 def main():
     print("hi")
+
+    global GUI
+    GUI = auction_gui.AuctionGUI(180, 190)
+    GUI.initialize_graphics()
+    #GUI.add_stations(1)
     #set signal handler so we can use SIGALRM to enforce time limits
     #signal.signal(signal.SIGALRM, signal_handler)
     
@@ -213,45 +224,58 @@ def main():
     UI.on_game_started([x.__name__ for x in agent_classes])
     num_agents = len(agent_classes)
 
-    #set up car generator
-    card_generator = NickCardGenerator.NickCardGenerator(10)
-    #cards = card_generator.buildDeck()
+    #set up card generator
+
+    #card_generator = NickCardGenerator.NickCardGenerator(NUM_ROUNDS)
+    cards = card_generator.buildDeck(10)
+    GUI.add_deck(cards)
 
     
     
-    for rnd in range(NUM_ROUNDS):
+    #for rnd in range(NUM_ROUNDS):
         
         #set up round
         #cards = generate_cards(num_agents*CARDS_PER_AGENT, rnd)
-        cards = card_generator.buildDeck()
-        UI.on_round_started(rnd, cards)
+        #cards = card_generator.buildDeck()
+    UI.on_round_started(NUM_ROUNDS, cards)
+    
+    agents = make_bidding_agents(agent_classes, cards, STARTING_BUDGET);
+    space_stations = make_space_stations(agents)
+    #GUI.add_stations(space_stations)
+    budgets = [STARTING_BUDGET for agent in agents]
+    cards_won = {}
+    
+    #do bidding
+    for i in range(len(cards)):
+        bids = get_bids(cards[i], i, agents, budgets)
+        winner = give_results(bids, agents, cards[i], budgets)
         
-        agents = make_bidding_agents(agent_classes, cards, STARTING_BUDGET);
-        space_stations = make_space_stations(agents)
-        budgets = [STARTING_BUDGET for agent in agents]
-        cards_won = {}
-        
-        #do bidding
-        for i in range(len(cards)):
-            bids = get_bids(cards[i], i, agents, budgets)
-            winner = give_results(bids, agents, cards[i], budgets)
-            space_stations[winner].addCard(cards[i])
-            
-            if winner in cards_won:
-                cards_won[winner].append(cards[i])
+        for j in range (len(space_stations)):
+            if j == winner:
+                b = agents[j].getBudget()
+                space_stations[j].addCard(cards[i])
+                space_stations[j].addBudget(b)
             else:
-                cards_won[winner] = [cards[i]]
+                space_stations[j].passround()
+            
         
-        
-        #do scoring
-        calculate_scores(cards_won, num_agents)
+        if winner in cards_won:
+            cards_won[winner].append(cards[i])
+        else:
+            cards_won[winner] = [cards[i]]
+        GUI.update_round(bids, winner, space_stations)
+    
+    
+    #do scoring
+    calculate_scores(cards_won, num_agents)
 
-        
+    
     
 
     UI.on_game_finished()
     for i in range(num_agents):
-        print(str(space_stations[i].getName())+space_stations[i].getScores())
+        print(str(space_stations[i].getName())+space_stations[i].getScores(NUM_ROUNDS))
+    GUI.root.mainloop()
 
 main()
     
