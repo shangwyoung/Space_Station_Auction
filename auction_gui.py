@@ -1,6 +1,7 @@
 from tkinter import *
 import card_generator
 import card
+import space_station
 
 class AuctionGUI():
     
@@ -55,10 +56,13 @@ class AuctionGUI():
 
         self.graph.pack(side=TOP, fill=BOTH, expand=1)
 
+        # graph scrollbar
+        """
         self.graph_scroll = Scrollbar(self.left, orient=HORIZONTAL,
                 command=self.graph.xview)
         self.graph_scroll.pack(side=TOP, fill=X)
         self.graph.config(xscrollcommand=self.graph_scroll.set)
+        """
 
         # buttons
         self.buttons = Frame(self.left, bg="grey", bd=5)
@@ -70,17 +74,17 @@ class AuctionGUI():
                                   width=10, command=self.step, activebackground="yellow")
         self.quit_button = Button(self.buttons, bg="#ff3333", text="QUIT",
                                   width=10, command=self.root.destroy, activebackground="red")
-        self.info_button = Button(self.buttons, bg="grey", text="?",
-                                  width=5, relief=GROOVE)
+        self.legend_button = Button(self.buttons, bg="grey", text="LEGEND",
+                                  width=7, relief=GROOVE)
 
         self.play_pause_button.pack(side=LEFT)
         self.step_button.pack(side=LEFT, padx=20)
         self.quit_button.pack(side=LEFT)
-        self.info_button.pack(side=RIGHT)
+        self.legend_button.pack(side=RIGHT)
 
         # bindings for [?] button
-        self.info_button.bind('<Enter>', self.legend)
-        self.info_button.bind('<Leave>', self.remove_legend)
+        self.legend_button.bind('<Enter>', self.legend)
+        self.legend_button.bind('<Leave>', self.remove_legend)
 
         # *RIGHT PANEL*
         self.right = Frame(self.root, bd=0)
@@ -94,6 +98,21 @@ class AuctionGUI():
         #card queue
         self.queue = Canvas(self.right, width=(self.width), bg="black", bd=0)
         self.queue.pack(side=TOP, fill=Y, expand=1)
+
+
+        # TESTING ONLY
+        self.station1 = space_station.SpaceStation("Super-Station", 12345)
+        self.station1.addCard(self.deck[0])
+        self.station1.addCard(self.deck[1])
+        self.station1.addCard(self.deck[2])
+        self.station1.addCard(self.deck[3])
+        self.station1.addCard(self.deck[4])
+        self.station1.addCard(self.deck[5])
+        self.station1.addCard(self.deck[6])
+        self.station1.addCard(self.deck[7])
+        self.station1.addCard(self.deck[8])
+        self.station1.addCard(self.deck[9])
+        self.draw_station(self.station1)
 
     def step(self):
         self.add_history(self.deck[0].getName() + " is now current. (TEST)")
@@ -165,6 +184,19 @@ class AuctionGUI():
         y = index*78
         self.queue.create_rectangle(0,y,190,70+y, 30, 0, "black", "black")
 
+    # draws a card-like representation of a players space-station
+    # this will require significant changes to bidding_agent and space_station
+    def draw_station(self, station):
+        self.graph.create_rectangle(10,10,116,175, fill="purple", outline="#202060", width=2)
+        self.graph.create_text(62,13, anchor=N, text="$999", font=("Helvetica", "22"))
+        self.graph.create_text(62,170, anchor=S, text="TEST", font=("Helvetica", "22"))
+
+        self.graph.create_rectangle(14,135-(station.getValue(0)*2),30,135, fill=self.colors[0], outline="#202060", width=2)
+        self.graph.create_rectangle(34,135-(station.getValue(1)*2),50,135, fill=self.colors[1], outline="#202060", width=2)
+        self.graph.create_rectangle(54,135-(station.getValue(2)*2),70,135, fill=self.colors[2], outline="#202060", width=2)
+        self.graph.create_rectangle(74,135-(station.getValue(3)*2),90,135, fill=self.colors[3], outline="#202060", width=2)
+        self.graph.create_rectangle(94,135-(station.getValue(4)*2),110,135, fill=self.colors[4], outline="#202060", width=2)
+
     # adds a new line of text to the bid history window
     def add_history(self, message):
         self.T.config(state=NORMAL)
@@ -182,29 +214,26 @@ class AuctionGUI():
             for i in range(0, len(self.deck)):
                 self.draw_cardlet(self.deck[i], i)
 
-    def update_info(self):
-        pass
-
     # draws the legend which shows the icons for each of the 5 categories
     def legend(self, event):
         width = self.graph.winfo_width()
         height = self.graph.winfo_height()
-        x1 = width-self.width-5
+        x1 = width-self.width+10
         y1 = height-self.height-5
         x2 = width-5
         y2 = height-5
-        self.a = self.graph.create_rectangle(x1,y1,x2,y2, fill="grey", width=5)
-        self.b = self.graph.create_text((x2-100), y1+(self.height*(1/6)), text="Science", anchor=W, font=("Helvetica", "12", "bold"))
-        self.c = self.graph.create_text((x2-100), y1+(self.height*(2/6)), text="Ecology", anchor=W, font=("Helvetica", "12", "bold"))
-        self.d = self.graph.create_text((x2-100), y1+(self.height*(3/6)), text="Culture", anchor=W, font=("Helvetica", "12", "bold"))
-        self.e = self.graph.create_text((x2-100), y1+(self.height*(4/6)), text="Commerce", anchor=W, font=("Helvetica", "12", "bold"))
-        self.f = self.graph.create_text((x2-100), y1+(self.height*(5/6)), text="Industry", anchor=W, font=("Helvetica", "12", "bold"))
+        self.a = self.graph.create_rectangle(x1,y1,x2,y2, fill="#202060", outline="grey", width=5)
+        self.b = self.graph.create_text((x2-100), y1+(self.height*(1/6)), text="Science", anchor=W, font=("Helvetica", "12", "bold"), fill=self.colors[0])
+        self.c = self.graph.create_text((x2-100), y1+(self.height*(2/6)), text="Ecology", anchor=W, font=("Helvetica", "12", "bold"), fill=self.colors[1])
+        self.d = self.graph.create_text((x2-100), y1+(self.height*(3/6)), text="Culture", anchor=W, font=("Helvetica", "12", "bold"), fill=self.colors[2])
+        self.e = self.graph.create_text((x2-100), y1+(self.height*(4/6)), text="Commerce", anchor=W, font=("Helvetica", "12", "bold"), fill=self.colors[3])
+        self.f = self.graph.create_text((x2-100), y1+(self.height*(5/6)), text="Industry", anchor=W, font=("Helvetica", "12", "bold"), fill=self.colors[4])
 
-        self.g = self.graph.create_oval((x2-150), y1+(self.height*(1/6))-10, (x2-130), y1+(self.height*(1/6))+10, fill="blue")
-        self.h = self.graph.create_oval((x2-150), y1+(self.height*(2/6))-10, (x2-130), y1+(self.height*(2/6))+10, fill="green")
-        self.i = self.graph.create_oval((x2-150), y1+(self.height*(3/6))-10, (x2-130), y1+(self.height*(3/6))+10, fill="purple")
-        self.j = self.graph.create_oval((x2-150), y1+(self.height*(4/6))-10, (x2-130), y1+(self.height*(4/6))+10, fill="yellow")
-        self.k = self.graph.create_oval((x2-150), y1+(self.height*(5/6))-10, (x2-130), y1+(self.height*(5/6))+10, fill="red")
+        self.g = self.graph.create_image((x2-150), y1+(self.height*(1/6)), image=self.icons[0], anchor=W)
+        self.h = self.graph.create_image((x2-150), y1+(self.height*(2/6)), image=self.icons[1], anchor=W)
+        self.i = self.graph.create_image((x2-150), y1+(self.height*(3/6)), image=self.icons[2], anchor=W)
+        self.j = self.graph.create_image((x2-150), y1+(self.height*(4/6)), image=self.icons[3], anchor=W)
+        self.k = self.graph.create_image((x2-150), y1+(self.height*(5/6)), image=self.icons[4], anchor=W)
 
     # removes all the canvas objects that make up the legend
     def remove_legend(self, event):
