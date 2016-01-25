@@ -58,7 +58,7 @@ class AuctionGUI():
         self.T.config(yscrollcommand=self.S.set)
 
         # canvas for player info, graph, etc
-        self.graph = Canvas(self.left, bg="black", scrollregion=[0,0,2592,1728])
+        self.graph = Canvas(self.left, bg="black", scrollregion=[0,0,2592,1728], width=800, height=600)
 
         self.img = PhotoImage(file="background.ppm")
         self.graph.create_image(0,0, anchor=NW, image=self.img)
@@ -193,7 +193,7 @@ class AuctionGUI():
     # draws a card-like representation of a players space-station
     # this will require significant changes to bidding_agent and space_station
     # related to this, we need to discuss the changes to space_station
-    def draw_station(self, station, index, r):
+    def draw_station(self, station, index):
         self.root.update()
         width = self.graph.winfo_width()
         height = self.graph.winfo_height()
@@ -207,10 +207,10 @@ class AuctionGUI():
             x = int(20 - l/2)
             
         self.graph.create_rectangle(5+95*index,height-160,95*(index+1),height-5, fill="purple", outline="grey", width=2)
-        self.graph.create_text(50+95*index,height-155, anchor=N, text="$1000", font=("Helvetica", "22"))
+        self.graph.create_text(50+95*index,height-155, anchor=N, text=station.getBudget(self.round), font=("Helvetica", "22"))
         self.graph.create_text(50+95*index,height-22, anchor=CENTER, text=station.getName(), font=("Helvetica", str(x)), width=90)
 
-        scores = station.getScores(r)
+        scores = station.getScores(self.round)
 
         if scores[0] > 0:
             self.graph.create_rectangle(9+95*index,height-40-(scores[0]*2),23+95*index,height-40, fill=self.colors[0], outline="#202060", width=2)
@@ -327,7 +327,7 @@ class AuctionGUI():
                         text="$"+str(stations[i].getBudget(self.round)), font=("Helvetica", "12"),
                         justify=CENTER))'''
             for i in range(0, len(stations)):
-                self.draw_station(stations[i], i, self.round)
+                self.draw_station(stations[i], i)
 
 
             self.round += 1            
@@ -337,6 +337,9 @@ class AuctionGUI():
         if len(self.stations) == 0:
             self.stations.append(stations)
             #agent info
+            for i in range(0, len(stations)):
+                self.draw_station(stations[i], i)
+            """
             self.graph.create_rectangle(5, 100, 85, 170, fill="#19334d", outline="#00e5e6", width=3)
             self.graph.create_text(45, 130, anchor=N, fill="#00e5e6", width = 75,
                             text=self.stations[0][0].getName(), font=("Helvetica", "12"),
@@ -386,7 +389,7 @@ class AuctionGUI():
                             text="Total Scores: ", font=("Helvetica", "12"),
                             justify=CENTER)
             #station info - to be changed
-            
+            """
             
         else:
             self.stations.append(stations)
