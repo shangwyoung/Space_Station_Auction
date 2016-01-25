@@ -2,28 +2,29 @@ import card
 
 class SpaceStation:
     # name and ID correspond to the player who is building the SpaceStation
-    def __init__(self, name, ID):
-        self.name = name
-        self.ID = ID
+    def __init__(self, agent):
+        self.agent = agent
         self.cards = []
         #self.scores = [0,0,0,0,0]
         self.scores = []
         self.scores.append([0,0,0,0,0])
-        self.budget = []
-        self.budget.append(1000)
+        self.budget = [1000]
         self.rankScore = 0
 
+    def getAgent(self):
+        return self.agent
+    
     def getName(self):
-        return self.name
- 
-    def getID(self):
-        return self.ID
- 
+        return self.agent.getName()
+
+    def getColor(self):
+        return self.agent.getColor()
+
     def getCards(self):
         return self.cards
  
     def getScores(self, r):
-        return ("["+str(self.scores[r][0])+" "+str(self.scores[r][1])+" "+str(self.scores[r][2])+" "+str(self.scores[r][3])+" "+str(self.scores[r][4])+"]")
+        return self.scores[r]
         #return self.scores
         
     def getFinalScore(self):

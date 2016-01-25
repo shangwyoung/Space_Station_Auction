@@ -83,7 +83,7 @@ def make_space_stations(agents):
         agent = agents[i]
         #name = agent.getName()
         #with time_limit(5, i, "__init__"):
-        stations[i] = space_station.SpaceStation(agent.getName(), i)
+        stations[i] = space_station.SpaceStation(agent)
         #print(stations[i].getName())
         #print(stations[i].getID())
     GUI.add_stations(stations)
@@ -273,8 +273,8 @@ def main():
     
 
     UI.on_game_finished()
-    for i in range(num_agents):
-        print(str(space_stations[i].getName())+space_stations[i].getScores(NUM_ROUNDS))
+    #for i in range(num_agents):
+        #print(str(space_stations[i].getName())+space_stations[i].getScores(NUM_ROUNDS))
     GUI.root.mainloop()
 
 main()

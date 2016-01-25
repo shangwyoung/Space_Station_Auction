@@ -193,33 +193,35 @@ class AuctionGUI():
     # draws a card-like representation of a players space-station
     # this will require significant changes to bidding_agent and space_station
     # related to this, we need to discuss the changes to space_station
-    """
-    def draw_station(self, station, index):
+    def draw_station(self, station, index, r):
         self.root.update()
         width = self.graph.winfo_width()
         height = self.graph.winfo_height()
 
         #scale font size for name
+        
         x = 22
+        
         l = len(station.getName())
         if l > 4:
-            x = 20 - l
+            x = int(20 - l/2)
             
         self.graph.create_rectangle(5+95*index,height-160,95*(index+1),height-5, fill="purple", outline="grey", width=2)
         self.graph.create_text(50+95*index,height-155, anchor=N, text="$1000", font=("Helvetica", "22"))
         self.graph.create_text(50+95*index,height-22, anchor=CENTER, text=station.getName(), font=("Helvetica", str(x)), width=90)
 
-        if station.getValue(0) > 0:
-            self.graph.create_rectangle(9+95*index,height-40-(station.getValue(0)*2),23+95*index,height-40, fill=self.colors[0], outline="#202060", width=2)
-        if station.getValue(1) > 0:
-            self.graph.create_rectangle(26+95*index,height-40-(station.getValue(1)*2),40+95*index,height-40, fill=self.colors[1], outline="#202060", width=2)
-        if station.getValue(2) > 0:
-            self.graph.create_rectangle(43+95*index,height-40-(station.getValue(2)*2),57+95*index,height-40, fill=self.colors[2], outline="#202060", width=2)
-        if station.getValue(3) > 0:
-            self.graph.create_rectangle(60+95*index,height-40-(station.getValue(3)*2),74+95*index,height-40, fill=self.colors[3], outline="#202060", width=2)
-        if station.getValue(4) > 0:
-            self.graph.create_rectangle(77+95*index,height-40-(station.getValue(4)*2),91+95*index,height-40, fill=self.colors[4], outline="#202060", width=2)
-        """
+        scores = station.getScores(r)
+
+        if scores[0] > 0:
+            self.graph.create_rectangle(9+95*index,height-40-(scores[0]*2),23+95*index,height-40, fill=self.colors[0], outline="#202060", width=2)
+        if scores[1] > 0:
+            self.graph.create_rectangle(26+95*index,height-40-(scores[1]*2),40+95*index,height-40, fill=self.colors[1], outline="#202060", width=2)
+        if scores[2] > 0:
+            self.graph.create_rectangle(43+95*index,height-40-(scores[2]*2),57+95*index,height-40, fill=self.colors[2], outline="#202060", width=2)
+        if scores[3] > 0:
+            self.graph.create_rectangle(60+95*index,height-40-(scores[3]*2),74+95*index,height-40, fill=self.colors[3], outline="#202060", width=2)
+        if scores[4] > 0:
+            self.graph.create_rectangle(77+95*index,height-40-(scores[4]*2),91+95*index,height-40, fill=self.colors[4], outline="#202060", width=2)
         
 
     def add_history(self, message):
@@ -300,7 +302,7 @@ class AuctionGUI():
                         justify=CENTER))
             
             #give card to the winner   
-            self.display.append(self.graph.create_rectangle(5+85*winner, 5, 85+85*winner, 60, fill="#19334d", outline="#00e5e6", width=3))
+            '''self.display.append(self.graph.create_rectangle(5+85*winner, 5, 85+85*winner, 60, fill="#19334d", outline="#00e5e6", width=3))
             self.display.append(self.graph.create_text(45+85*winner, 40, anchor=N, fill="#00e5e6", width = 75,
                         text="[" + str(self.card.getValue(0)) +
                        ", " + str(self.card.getValue(1)) +
@@ -310,10 +312,10 @@ class AuctionGUI():
                         justify=CENTER))
             self.display.append(self.graph.create_text(45+85*winner, 20, anchor=N, fill="#00e5e6", width = 75,
                         text="$"+str(price), font=("Helvetica", "12"),
-                        justify=CENTER))
+                        justify=CENTER))'''
             self.add_history("'"+stations[winner].getName()+"' won '"+self.card.getName()+"' for $"+str(price))
 
-            #update total scores
+            '''#update total scores
             for i in range (len(stations)):
                 self.display.append(self.graph.create_text(45+85*i, 240, anchor=N, fill="#00e5e6", width = 75,
                         text=stations[i].getScores(self.round), font=("Helvetica", "12"),
@@ -323,7 +325,9 @@ class AuctionGUI():
             for i in range (len(stations)):
                 self.display.append(self.graph.create_text(45+85*i, 195, anchor=N, fill="#00e5e6", width = 75,
                         text="$"+str(stations[i].getBudget(self.round)), font=("Helvetica", "12"),
-                        justify=CENTER))
+                        justify=CENTER))'''
+            for i in range(0, len(stations)):
+                self.draw_station(stations[i], i, self.round)
 
 
             self.round += 1            
