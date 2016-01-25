@@ -7,8 +7,8 @@ import space_station
 class AuctionGUI():
     
     def __init__(self, width, height):
-        self.wide = width
-        self.high = height
+        self.width = width
+        self.height = height
         self.bids = []
         self.winner = []
         self.stations = []
@@ -96,12 +96,12 @@ class AuctionGUI():
         self.right.pack(side=RIGHT, fill=Y)
 
         # current card
-        self.current = Canvas(self.right, width =(self.wide+10),
-                              height=(self.high+10), bg="black")
+        self.current = Canvas(self.right, width =(self.width+10),
+                              height=(self.height+10), bg="black")
         self.current.pack(side=TOP)
 
         #card queue
-        self.queue = Canvas(self.right, width=(self.wide+10), bg="black")
+        self.queue = Canvas(self.right, width=(self.width+10), bg="black")
         self.queue.pack(side=TOP, fill=Y, expand=1)
 
     def step(self):
