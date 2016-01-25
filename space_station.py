@@ -11,6 +11,7 @@ class SpaceStation:
         self.scores.append([0,0,0,0,0])
         self.budget = []
         self.budget.append(1000)
+        self.rankScore = 0
 
     def getName(self):
         return self.name
@@ -25,8 +26,18 @@ class SpaceStation:
         return ("["+str(self.scores[r][0])+" "+str(self.scores[r][1])+" "+str(self.scores[r][2])+" "+str(self.scores[r][3])+" "+str(self.scores[r][4])+"]")
         #return self.scores
         
+    def getFinalScore(self):
+    	return self.scores[len(self.scores)-1]
+        
     def getBudget(self, r):
     	return self.budget[r]
+    	
+    def getRank(self):
+        return self.rankScore
+
+    def incrementRankScore(self, amount):
+        if amount > 0:
+            self.rankScore += amount
  
     # adds a card to the list of won cards and increases the scores of the
     # categories that appear on the card
