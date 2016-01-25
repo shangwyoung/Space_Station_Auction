@@ -31,6 +31,9 @@ class SpaceStation:
         if amount > 0:
             self.rankScore += amount
 
+    def resetRankScore(self):
+        self.rankScore = 0
+
     # adds a card to the list of won cards and increases the scores of the
     # categories that appear on the card
     def addCard(self, card):
