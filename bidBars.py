@@ -5,7 +5,7 @@
 
 import time
 from tkinter import *
-import card
+#import card
 #import BiddingAgent
 #import AuctionSimulator
 def findhighest(playerinfo):
