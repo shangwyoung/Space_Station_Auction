@@ -112,7 +112,10 @@ class AuctionGUI():
         self.station1.addCard(self.deck[7])
         self.station1.addCard(self.deck[8])
         self.station1.addCard(self.deck[9])
-        self.draw_station(self.station1)
+        self.draw_station(self.station1, 0)
+        self.draw_station(self.station1, 1)
+        self.draw_station(self.station1, 2)
+        self.draw_station(self.station1, 3)
 
     def step(self):
         self.add_history(self.deck[0].getName() + " is now current. (TEST)")
@@ -186,16 +189,24 @@ class AuctionGUI():
 
     # draws a card-like representation of a players space-station
     # this will require significant changes to bidding_agent and space_station
-    def draw_station(self, station):
-        self.graph.create_rectangle(10,10,116,175, fill="purple", outline="#202060", width=2)
-        self.graph.create_text(62,13, anchor=N, text="$999", font=("Helvetica", "22"))
-        self.graph.create_text(62,170, anchor=S, text="TEST", font=("Helvetica", "22"))
+    def draw_station(self, station, index):
+        self.root.update()
+        width = self.graph.winfo_width()
+        height = self.graph.winfo_height()
+        self.graph.create_rectangle(5+95*index,height-160,95*(index+1),height-5, fill="purple", outline="grey", width=2)
+        self.graph.create_text(50+95*index,height-155, anchor=N, text="$999", font=("Helvetica", "22"))
+        self.graph.create_text(50+95*index,height-5, anchor=S, text="TEST", font=("Helvetica", "22")) #name will need to scale to size of name
 
-        self.graph.create_rectangle(14,135-(station.getValue(0)*2),30,135, fill=self.colors[0], outline="#202060", width=2)
-        self.graph.create_rectangle(34,135-(station.getValue(1)*2),50,135, fill=self.colors[1], outline="#202060", width=2)
-        self.graph.create_rectangle(54,135-(station.getValue(2)*2),70,135, fill=self.colors[2], outline="#202060", width=2)
-        self.graph.create_rectangle(74,135-(station.getValue(3)*2),90,135, fill=self.colors[3], outline="#202060", width=2)
-        self.graph.create_rectangle(94,135-(station.getValue(4)*2),110,135, fill=self.colors[4], outline="#202060", width=2)
+        if station.getValue(0) > 0:
+            self.graph.create_rectangle(9+95*index,height-40-(station.getValue(0)*2),23+95*index,height-40, fill=self.colors[0], outline="#202060", width=2)
+        if station.getValue(1) > 0:
+            self.graph.create_rectangle(26+95*index,height-40-(station.getValue(1)*2),40+95*index,height-40, fill=self.colors[1], outline="#202060", width=2)
+        if station.getValue(2) > 0:
+            self.graph.create_rectangle(43+95*index,height-40-(station.getValue(2)*2),57+95*index,height-40, fill=self.colors[2], outline="#202060", width=2)
+        if station.getValue(3) > 0:
+            self.graph.create_rectangle(60+95*index,height-40-(station.getValue(3)*2),74+95*index,height-40, fill=self.colors[3], outline="#202060", width=2)
+        if station.getValue(4) > 0:
+            self.graph.create_rectangle(77+95*index,height-40-(station.getValue(4)*2),91+95*index,height-40, fill=self.colors[4], outline="#202060", width=2)
 
     # adds a new line of text to the bid history window
     def add_history(self, message):
