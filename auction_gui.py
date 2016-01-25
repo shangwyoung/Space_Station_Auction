@@ -15,13 +15,30 @@ class AuctionGUI():
         self.round = 0
         self.price = []
         self.display = []
-        #self.deck = card_generator.buildDeck(40)
+
+        self.icons = [] #initialized below
+        self.colors = ['cyan','#8cff1a','#ff66ff','yellow','#ff6666']
+        #experimental
+        self.borders =['','cyan','#00b1b3','#3333ff','#009933','purple','grey','','#8cff1a','','yellow','','red','','','magenta','','','','', 'orange']
+      
 
     def initialize_graphics(self):
 
         # ROOT WINDOW
         self.root = Tk()
         self.root.title("Space Station Auction!")
+        
+        # Icons!
+        self.science = PhotoImage(file="science.gif")
+        self.ecology = PhotoImage(file="ecology.gif")
+        self.culture = PhotoImage(file="culture.gif")
+        self.commerce = PhotoImage(file="commerce.gif")
+        self.industry = PhotoImage(file="industry.gif")
+        self.icons.append(self.science)
+        self.icons.append(self.ecology)
+        self.icons.append(self.culture)
+        self.icons.append(self.commerce)
+        self.icons.append(self.industry)
 
         # *LEFT PANEL*
         self.left = Frame(self.root)
@@ -42,7 +59,7 @@ class AuctionGUI():
         # canvas for player info, graph, etc
         self.graph = Canvas(self.left, bg="black", scrollregion=[0,0,2592,1728])
 
-        self.img = PhotoImage(file="background.gif")
+        self.img = PhotoImage(file="background.ppm")
         self.graph.create_image(0,0, anchor=NW, image=self.img)
 
         self.graph.pack(side=TOP, fill=BOTH, expand=1)
@@ -62,13 +79,17 @@ class AuctionGUI():
                                   width=10, command=self.step, activebackground="yellow")
         self.quit_button = Button(self.buttons, bg="#ff3333", text="QUIT",
                                   width=10, command=self.root.destroy, activebackground="red")
-        self.info_button = Button(self.buttons, bg="grey", text="?",
-                                  width=5, activebackground="#ff3333")
+        self.legend_button = Button(self.buttons, bg="grey", text="LEGEND",
+                                  width=7, relief=GROOVE)
 
         self.play_pause_button.pack(side=LEFT)
         self.step_button.pack(side=LEFT, padx=20)
         self.quit_button.pack(side=LEFT)
-        self.info_button.pack(side=RIGHT)
+        self.legend_button.pack(side=RIGHT)
+        
+        # bindings for [?] button
+        self.legend_button.bind('<Enter>', self.legend)
+        self.legend_button.bind('<Leave>', self.remove_legend)
 
         # *RIGHT PANEL*
         self.right = Frame(self.root)
@@ -84,36 +105,70 @@ class AuctionGUI():
         self.queue.pack(side=TOP, fill=Y, expand=1)
 
     def step(self):
-        self.draw_card()
-        self.update_queue()
+        self.advance_queue()
         self.update_info()
+        
 
     # I think this method should probably take card as an arg instead of
-    # searching the deck within the method, but we can discuss this
-    def draw_card(self):
-        if len(self.deck)>0:
-            self.card = self.deck[0]
-            """
-            for rounded card later
+    # searching the deck within the method, but we can discuss this -NM
+    def draw_card(self, card):
+        # consider seperate method for this (duplicated in draw_cardlet) or a card method.
+        num = 0
+        index1 = 0
+        index2 = 0
+        for i in range (0, len(card.getStats())):
+            if card.getValue(i) > 0:
+                num += 1
+                if num == 1:
+                    index1 = i
+                else:
+                    index2 = i
+        self.create_rounded(self.current, 0,0,180,190, 30, 1, "#202060", self.borders[(index1+1)*(index2+1)])# old color is "#ffc34d"
+        self.create_rounded(self.current, 10,10,170,180, 20, 0, "#202060", "#202060")
+        self.current.create_text(90,20, anchor=N, fill=self.borders[(index1+1)*(index2+1)], width =150,
+                                text=card.getName(), font=("Helvetica", "16"),
+                                justify=CENTER)
+        
+        if num == 1:
+            self.current.create_image(78,150, anchor=W, image=self.icons[index1])
+            self.current.create_text(76, 150, anchor=E, text=card.getValue(index1),
+                                     font=("Helvetica", "22"), fill=self.colors[index1])
+        else:
+            self.current.create_image(38,150, anchor=W, image=self.icons[index1])
+            self.current.create_text(36, 150, anchor=E, text=card.getValue(index1),
+                                     font=("Helvetica", "22"), fill=self.colors[index1])
+            self.current.create_image(118,150, anchor=W, image=self.icons[index2])
+            self.current.create_text(116, 150, anchor=E, text=card.getValue(index2),
+                                     font=("Helvetica", "22"), fill=self.colors[index2])
+                    
 
-            self.current.create_arc(5,5,17,17, start=90, extent=90, outline="white")
-            self.current.create_arc(173,5,185,17, start=0, extent=90, style=ARC, outline="white")
-            self.current.create_arc(173,178,185,195, start=270, extent=90, style=ARC, outline="white")
-            self.current.create_arc(5,178,17,195, start=180, extent=90, style=ARC, outline="white")
-            """
-            self.current.create_rectangle(5,5,190,200, fill="#19334d", outline="#00e5e6", width=10)
-            self.current.create_text(95,20, anchor=N, fill="#00e5e6", width =150,
-                        text=self.card.getName(), font=("Helvetica", "16"),
-                        justify=CENTER)
-            self.current.create_text(95,150, anchor=N, fill="#00e5e6", width =150,
-                        text="[" + str(self.card.getValue(0)) +
-                   ", " + str(self.card.getValue(1)) +
-                   ", " + str(self.card.getValue(2)) +
-                   ", " + str(self.card.getValue(3)) +
-                   ", " + str(self.card.getValue(4)) + "]", 
-                        font=("Helvetica", "16"),
-                        justify=CENTER)
-            self.deck.remove(self.deck[0])
+    # draws a reduced version of a card which only has the symbols and colors
+    def draw_cardlet(self, card, index):
+        num = 0
+        index1 = 0
+        index2 = 0
+        for i in range (0, len(card.getStats())):
+            if card.getValue(i) > 0:
+                num += 1
+                if num == 1:
+                    index1 = i
+                else:
+                    index2 = i
+        y = index*78
+        self.create_rounded(self.queue, 0,y,180,76+y, 30, 1, "#202060", self.borders[(index1+1)*(index2+1)])
+        self.create_rounded(self.queue, 10,10+y,170,66+y, 20, 0, "#202060", "#202060")
+        
+        if num == 1:
+            self.queue.create_image(78,38+y, anchor=W, image=self.icons[index1])
+            self.queue.create_text(76, 38+y, anchor=E, text=card.getValue(index1),
+                                     font=("Helvetica", "22"), fill=self.colors[index1])
+        else:
+            self.queue.create_image(38,38+y, anchor=W, image=self.icons[index1])
+            self.queue.create_text(36, 38+y, anchor=E, text=card.getValue(index1),
+                                     font=("Helvetica", "22"), fill=self.colors[index1])
+            self.queue.create_image(118,38+y, anchor=W, image=self.icons[index2])
+            self.queue.create_text(116, 38+y, anchor=E, text=card.getValue(index2),
+                                     font=("Helvetica", "22"), fill=self.colors[index2])
 
     def add_history(self, message):
         self.T.config(state=NORMAL)
@@ -121,43 +176,57 @@ class AuctionGUI():
         self.T.see(END)
         self.T.config(state=DISABLED)
 
-    def update_queue(self):
-        #first card in queue
-        if len(self.deck)>0:
-            
-            card1=self.deck[0]
-            self.queue.create_rectangle(5, 5, 190, 100, fill="#19334d", outline="#00e5e6", width=3)
-            self.queue.create_text(95, 15, anchor=N, fill="#00e5e6", width = 150,
-                        text="[NEXT 1] "+card1.getName(), font=("Helvetica", "13"),
-                        justify=CENTER)
-            self.queue.create_text(95,80, anchor=N, fill="#00e5e6", width =150,
-                        text="[" + str(card1.getValue(0)) +
-                   ", " + str(card1.getValue(1)) +
-                   ", " + str(card1.getValue(2)) +
-                   ", " + str(card1.getValue(3)) +
-                   ", " + str(card1.getValue(4)) + "]", 
-                        font=("Helvetica", "13"),
-                        justify=CENTER)
-        else:
-            self.queue.create_rectangle(5, 5, 190, 100, fill="#000000", outline="#000000", width=3)
-        #second card in queue
-        if len(self.deck)>1:
-            card2 = self.deck[1]
-            self.queue.create_rectangle(5, 105, 190, 200, fill="#19334d", outline="#00e5e6", width=3)
-            self.queue.create_text(95, 115, anchor=N, fill="#00e5e6", width = 150,
-                        text="[NEXT 2] "+card2.getName(), font=("Helvetica", "13"),
-                        justify=CENTER)
-            self.queue.create_text(95,180, anchor=N, fill="#00e5e6", width =150,
-                        text="[" + str(card2.getValue(0)) +
-                   ", " + str(card2.getValue(1)) +
-                   ", " + str(card2.getValue(2)) +
-                   ", " + str(card2.getValue(3)) +
-                   ", " + str(card2.getValue(4)) + "]", 
-                        font=("Helvetica", "13"),
-                        justify=CENTER)
-        else:
-            self.queue.create_rectangle(5, 105, 190, 200, fill="#000000", outline="#000000", width=3)
+    def advance_queue(self):
+        if self.deck:
+            self.card = self.deck[0]
+            self.draw_card(self.card)
+            self.deck.remove(self.deck[0])
+            self.queue.delete(ALL)
+            for i in range(0, len(self.deck)):
+                self.draw_cardlet(self.deck[i], i)
+                
+    # draws the legend which shows the icons for each of the 5 categories
+    def legend(self, event):
+        width = self.graph.winfo_width()
+        height = self.graph.winfo_height()
+        x1 = width-self.width+10
+        y1 = height-self.height-5
+        x2 = width-5
+        y2 = height-5
+        self.a = self.graph.create_rectangle(x1,y1,x2,y2, fill="#202060", outline="grey", width=5)
+        self.b = self.graph.create_text((x2-100), y1+(self.height*(1/6)), text="Science", anchor=W, font=("Helvetica", "12", "bold"), fill=self.colors[0])
+        self.c = self.graph.create_text((x2-100), y1+(self.height*(2/6)), text="Ecology", anchor=W, font=("Helvetica", "12", "bold"), fill=self.colors[1])
+        self.d = self.graph.create_text((x2-100), y1+(self.height*(3/6)), text="Culture", anchor=W, font=("Helvetica", "12", "bold"), fill=self.colors[2])
+        self.e = self.graph.create_text((x2-100), y1+(self.height*(4/6)), text="Commerce", anchor=W, font=("Helvetica", "12", "bold"), fill=self.colors[3])
+        self.f = self.graph.create_text((x2-100), y1+(self.height*(5/6)), text="Industry", anchor=W, font=("Helvetica", "12", "bold"), fill=self.colors[4])
 
+        self.g = self.graph.create_image((x2-150), y1+(self.height*(1/6)), image=self.icons[0], anchor=W)
+        self.h = self.graph.create_image((x2-150), y1+(self.height*(2/6)), image=self.icons[1], anchor=W)
+        self.i = self.graph.create_image((x2-150), y1+(self.height*(3/6)), image=self.icons[2], anchor=W)
+        self.j = self.graph.create_image((x2-150), y1+(self.height*(4/6)), image=self.icons[3], anchor=W)
+        self.k = self.graph.create_image((x2-150), y1+(self.height*(5/6)), image=self.icons[4], anchor=W)
+
+    # removes all the canvas objects that make up the legend
+    def remove_legend(self, event):
+        self.graph.delete(self.a,self.b,self.c,self.d,self.e,
+                          self.f,self.g,self.h,self.i,self.j,
+                          self.k)
+
+    # draws a rounded rectangle. Format: (canvas, x1,y1,x2,y2, corner radius, border width, fill color)
+    def create_rounded(self, canvas, x1, y1, x2, y2, r, w, o, f):
+        canvas.create_arc(x1, y1, x1+r, y1+r, start=90, extent=90, style=PIESLICE, width=w, outline=o, fill=f)
+        canvas.create_arc(x2-r, y1, x2, y1+r, start=0, extent=90, style=PIESLICE, width=w, outline=o, fill=f)
+        canvas.create_arc(x1, y2-r, x1+r, y2, start=180, extent=90, style=PIESLICE, width=w, outline=o, fill=f)
+        canvas.create_arc(x2-r, y2-r, x2, y2, start=270, extent=90, style=PIESLICE, width=w, outline=o, fill=f)
+        
+        canvas.create_line(x1+r/2, y1, x2-r/2, y1, width=w, fill=o)
+        canvas.create_line(x1, y1+r/2, x1, y2-r/2, width=w, fill=o)
+        canvas.create_line(x1+r/2, y2, x2-r/2, y2, width=w, fill=o)
+        canvas.create_line(x2, y1+r/2, x2, y2-r/2, width=w, fill=o)
+
+        canvas.create_rectangle(x1+r/2-w/2, y1+w/2, x2-r/2+w/2, y2-w/2, fill=f, width=0)
+        canvas.create_rectangle(x1+w/2, y1+r/2-w/2, x2-w/2, y2-r/2+w/2, fill=f, width=0)
+                
     def update_info(self):
         #delete current price and card
         if len(self.display)>0:
@@ -266,7 +335,6 @@ class AuctionGUI():
         else:
             self.stations.append(stations)
 
-    #def update_info(self):
         
 
     def add_deck(self, deck):
@@ -280,17 +348,5 @@ class AuctionGUI():
 
     def update_price(self, price):
         self.price.append(price)
-        
-"""
-def main():
-    gui = AuctionGUI(180, 190)
-    gui.initialize_graphics()
-    gui.add_stations(1)
-    gui.add_history("player5 won 'Puppy Cloning Center' for $100")
-    gui.add_history("There was a tie for best bid, but player2 won 'Defensive Weapons Array' for $85")
-    gui.add_history("player2 won 'Emergency Escape Pod' for $95")
-    gui.add_history("player7 won 'Oxygen Farm' for $300")
-    gui.add_history("player0 won 'Interstellar Party Beacon' for $250")
-    gui.root.mainloop()
 
-main()"""
+
