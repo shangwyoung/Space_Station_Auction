@@ -15,6 +15,7 @@ class AuctionGUI():
         self.round = 0
         self.price = []
         self.display = []
+        self.deck = card_generator.buildDeck(10) #for testing
 
         self.icons = [] #initialized below
         self.colors = ['cyan','#8cff1a','#ff66ff','yellow','#ff6666']
@@ -64,10 +65,13 @@ class AuctionGUI():
 
         self.graph.pack(side=TOP, fill=BOTH, expand=1)
 
+        # scrollbar for main canvas... probably won't use
+        """
         self.graph_scroll = Scrollbar(self.left, orient=HORIZONTAL,
                 command=self.graph.xview)
         self.graph_scroll.pack(side=TOP, fill=X)
         self.graph.config(xscrollcommand=self.graph_scroll.set)
+        """
 
         # buttons
         self.buttons = Frame(self.left, bg="grey", bd=5)
@@ -103,6 +107,22 @@ class AuctionGUI():
         #card queue
         self.queue = Canvas(self.right, width=(self.width), bg="black")
         self.queue.pack(side=TOP, fill=Y, expand=1)
+        
+        # TESTING ONLY
+        """
+        self.station1 = space_station.SpaceStation("Super-Station", 12345)
+        self.station1.addCard(self.deck[0])
+        self.station1.addCard(self.deck[1])
+        self.station1.addCard(self.deck[2])
+        self.station1.addCard(self.deck[3])
+        self.station1.addCard(self.deck[4])
+        self.station1.addCard(self.deck[5])
+        self.station1.addCard(self.deck[6])
+        self.station1.addCard(self.deck[7])
+        self.station1.addCard(self.deck[8])
+        self.station1.addCard(self.deck[9])
+        self.draw_station(self.station1, 0)
+        """
 
     def step(self):
         self.advance_queue()
@@ -169,6 +189,38 @@ class AuctionGUI():
             self.queue.create_image(118,38+y, anchor=W, image=self.icons[index2])
             self.queue.create_text(116, 38+y, anchor=E, text=card.getValue(index2),
                                      font=("Helvetica", "22"), fill=self.colors[index2])
+
+    # draws a card-like representation of a players space-station
+    # this will require significant changes to bidding_agent and space_station
+    # related to this, we need to discuss the changes to space_station
+    """
+    def draw_station(self, station, index):
+        self.root.update()
+        width = self.graph.winfo_width()
+        height = self.graph.winfo_height()
+
+        #scale font size for name
+        x = 22
+        l = len(station.getName())
+        if l > 4:
+            x = 20 - l
+            
+        self.graph.create_rectangle(5+95*index,height-160,95*(index+1),height-5, fill="purple", outline="grey", width=2)
+        self.graph.create_text(50+95*index,height-155, anchor=N, text="$1000", font=("Helvetica", "22"))
+        self.graph.create_text(50+95*index,height-22, anchor=CENTER, text=station.getName(), font=("Helvetica", str(x)), width=90)
+
+        if station.getValue(0) > 0:
+            self.graph.create_rectangle(9+95*index,height-40-(station.getValue(0)*2),23+95*index,height-40, fill=self.colors[0], outline="#202060", width=2)
+        if station.getValue(1) > 0:
+            self.graph.create_rectangle(26+95*index,height-40-(station.getValue(1)*2),40+95*index,height-40, fill=self.colors[1], outline="#202060", width=2)
+        if station.getValue(2) > 0:
+            self.graph.create_rectangle(43+95*index,height-40-(station.getValue(2)*2),57+95*index,height-40, fill=self.colors[2], outline="#202060", width=2)
+        if station.getValue(3) > 0:
+            self.graph.create_rectangle(60+95*index,height-40-(station.getValue(3)*2),74+95*index,height-40, fill=self.colors[3], outline="#202060", width=2)
+        if station.getValue(4) > 0:
+            self.graph.create_rectangle(77+95*index,height-40-(station.getValue(4)*2),91+95*index,height-40, fill=self.colors[4], outline="#202060", width=2)
+        """
+        
 
     def add_history(self, message):
         self.T.config(state=NORMAL)
