@@ -5,10 +5,16 @@ import card
 class SortSpaceStations(object):
     @staticmethod
     def sort_stations(stations):
+        SortSpaceStations.resetAllRankScores(stations)
         SortSpaceStations.updateRankScores(stations)
         # sort stations
         stations.sort(key=operator.attrgetter('rankScore'), reverse=True)
         return stations
+
+    @staticmethod
+    def resetAllRankScores(stations):
+        for s in stations:
+            s.resetRankScore()
 
     @staticmethod
     def updateRankScores(stations):
