@@ -265,14 +265,31 @@ class AuctionGUI():
             Rx = 85 + i*95
             Ry = height
             
-            iterations = 120
+            iterations = 105
             increment = bar_size/iterations
+            print (increment)
             bar = self.graph.create_rectangle(Rx,Ry,Lx,Ly, fill=color, width=0)
             for j in range(iterations):
                 coords = self.graph.coords(bar)
                 self.graph.coords(bar, coords[0], coords[1]-increment, coords[2], coords[3])
                 self.root.update()
-                time.sleep(0.002)
+                if increment > 4:
+                    if (j/iterations) > .8:
+                       time.sleep(0.0194)
+                    else:
+                        time.sleep(0.015)
+                elif increment > 2:
+                    time.sleep(0.012) #good
+                elif increment > 1.5:
+                    time.sleep(0.0097) #good
+                elif increment > 1:
+                    time.sleep(0.009)
+                elif increment > .47: #good
+                    time.sleep(0.0047)
+                elif increment < .3:
+                    time.sleep(0.0016)
+                else:
+                   time.sleep(0.002)
 
     # displays a text message
     def add_history(self, message):
