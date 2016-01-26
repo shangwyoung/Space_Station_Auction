@@ -212,7 +212,6 @@ def sort_stations(stations):
 
             
 def main():
-    print("hi")
 
     global GUI
     GUI = auction_gui.AuctionGUI(180, 190)
