@@ -125,9 +125,12 @@ class AuctionGUI():
         """
 
     def step(self):
-        self.advance_queue()
-        self.update_info()
-        
+        if len(self.stations)>2:
+            self.advance_queue()
+            self.update_info()
+        else:
+            self.give_result()
+
 
     # I think this method should probably take card as an arg instead of
     # searching the deck within the method, but we can discuss this -NM
@@ -286,7 +289,7 @@ class AuctionGUI():
         if len(self.display)>0:
             for i in range (len(self.display)):
                 self.graph.delete(self.display[i])
-        if len(self.bids)>0:
+        if len(self.stations)>2:
             #update bidding price
             bids = self.bids[0]
             winner = self.winner[0]
@@ -394,6 +397,14 @@ class AuctionGUI():
         else:
             self.stations.append(stations)
 
+    def give_result(self):
+        if len(self.stations)>1 :
+            stations = self.stations[1]
+        
+            for i in range(0, len(stations)):
+                self.draw_station(stations[i], i)
+        
+            
         
 
     def add_deck(self, deck):

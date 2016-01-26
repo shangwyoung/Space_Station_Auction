@@ -3,6 +3,7 @@ import card
 import card_generator
 import space_station
 import auction_gui
+import sortSpaceStations
 
 import user_interface
 import random
@@ -14,7 +15,7 @@ import signal
 from contextlib import contextmanager
 
 # game constants
-NUM_ROUNDS = 100
+NUM_ROUNDS = 10
 STARTING_BUDGET = 1000
 CARDS_PER_AGENT = 5
 
@@ -152,6 +153,11 @@ def give_results(bids, agents, card, budgets):
     UI.on_auction_finished(card, winner, price)
     return winner
 
+def sort_stations(stations):
+    sorter = sortSpaceStations.SortSpaceStations()
+    sortedstations = sorter.sort_stations(stations)
+    return sortedstations
+
 
 
 #caculates everyones score
@@ -159,7 +165,7 @@ def give_results(bids, agents, card, budgets):
 #return list of scores
 #
 #may need to reorganize this to work with vizualizations
-def calculate_scores(cards_won, num_agents):
+"""def calculate_scores(cards_won, num_agents):
     #total each players scores
     score = [0]*num_agents
     totals = []
@@ -202,7 +208,8 @@ def calculate_scores(cards_won, num_agents):
         catagories[i] = high_id
         
     UI.on_round_finished(score, dominations, catagories)
-    return score
+    return score"""
+
             
 def main():
     print("hi")
@@ -267,12 +274,19 @@ def main():
     
     
     #do scoring
-    calculate_scores(cards_won, num_agents)
-
+    sortedstations = sort_stations(space_stations)
+    #GUI.add_stations(sortedstations)
     
-    
+ 
 
     UI.on_game_finished()
+    for i in range(num_agents):
+        print(str(space_stations[i].getName())+": "+str(space_stations[i].getScores(NUM_ROUNDS)[0])
+             +" "+str(space_stations[i].getScores(NUM_ROUNDS)[1])
+             +" "+str(space_stations[i].getScores(NUM_ROUNDS)[2])
+             +" "+str(space_stations[i].getScores(NUM_ROUNDS)[3])
+             +" "+str(space_stations[i].getScores(NUM_ROUNDS)[4]))
+        print(space_stations[i].getRank())
     #for i in range(num_agents):
         #print(str(space_stations[i].getName())+space_stations[i].getScores(NUM_ROUNDS))
     GUI.root.mainloop()
