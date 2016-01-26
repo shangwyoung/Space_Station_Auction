@@ -207,7 +207,7 @@ class AuctionGUI():
             x = int(20 - l/2)
             
         self.graph.create_rectangle(5+95*index,height-160,95*(index+1),height-5, fill="purple", outline="grey", width=2)
-        self.graph.create_text(50+95*index,height-155, anchor=N, text=station.getBudget(self.round), font=("Helvetica", "22"))
+        self.graph.create_text(50+95*index,height-155, anchor=N, text="$"+str(station.getBudget(self.round)), font=("Helvetica", "22"))
         self.graph.create_text(50+95*index,height-22, anchor=CENTER, text=station.getName(), font=("Helvetica", str(x)), width=90)
 
         scores = station.getScores(self.round)
@@ -326,6 +326,7 @@ class AuctionGUI():
                 self.display.append(self.graph.create_text(45+85*i, 195, anchor=N, fill="#00e5e6", width = 75,
                         text="$"+str(stations[i].getBudget(self.round)), font=("Helvetica", "12"),
                         justify=CENTER))'''
+            self.graph.create_image(0,0, anchor=NW, image=self.img)
             for i in range(0, len(stations)):
                 self.draw_station(stations[i], i)
 
