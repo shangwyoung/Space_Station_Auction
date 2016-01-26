@@ -204,7 +204,6 @@ class AuctionGUI():
         for i in bids:
             if i[1] > highest:
                 highest = i[1]
-        print(highest)
         return highest
 
     def scale(self, height, highest, bid):
@@ -247,6 +246,33 @@ class AuctionGUI():
                     self.graph.move(bar, 0, -(height/iterations))
                     self.root.update()
                     time.sleep(0.008)
+
+    def draw_bars(self, stations, bids):
+        width = self.graph.winfo_width()
+        height = self.graph.winfo_height() - 162
+        players = len(bids)
+        highest = self.findhighest(bids)
+
+        for i in range(0,players):
+            bar = 0
+            player_data=bids[i]
+            bid = player_data[1]
+            color = stations[i].getColor()
+            bar_size = (bid/highest)*height
+
+            Lx = 15 + i*95
+            Ly = height
+            Rx = 85 + i*95
+            Ry = height
+            
+            iterations = 120
+            increment = bar_size/iterations
+            bar = self.graph.create_rectangle(Rx,Ry,Lx,Ly, fill=color, width=0)
+            for j in range(iterations):
+                coords = self.graph.coords(bar)
+                self.graph.coords(bar, coords[0], coords[1]-increment, coords[2], coords[3])
+                self.root.update()
+                time.sleep(0.002)
 
     # displays a text message
     def add_history(self, message):
@@ -355,7 +381,7 @@ class AuctionGUI():
             for i in range(0, len(stations)):
                 self.draw_station(stations[i], i)
 
-            self.makeBars(stations, bids)
+            self.draw_bars(stations, bids)
 
             self.add_history("'"+stations[winner].getName()+"' won '"+self.card.getName()+"' for $"+str(price))
 
