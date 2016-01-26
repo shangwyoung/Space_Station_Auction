@@ -212,6 +212,7 @@ def sort_stations(stations):
 
             
 def main():
+    print("hi")
 
     global GUI
     GUI = auction_gui.AuctionGUI(180, 190)
@@ -273,7 +274,7 @@ def main():
     
     
     #do scoring
-    sortedstations = sort_stations(space_stations)
+    #sortedstations = sort_stations(space_stations)
     #GUI.add_stations(sortedstations)
     
  
