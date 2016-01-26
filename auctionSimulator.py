@@ -205,7 +205,6 @@ def calculate_scores(cards_won, num_agents):
     return score
             
 def main():
-    print("hi")
 
     global GUI
     GUI = auction_gui.AuctionGUI(180, 190)

@@ -66,14 +66,6 @@ class AuctionGUI():
 
         self.graph.pack(side=TOP, fill=BOTH, expand=1)
 
-        # scrollbar for main canvas... probably won't use
-        """
-        self.graph_scroll = Scrollbar(self.left, orient=HORIZONTAL,
-                command=self.graph.xview)
-        self.graph_scroll.pack(side=TOP, fill=X)
-        self.graph.config(xscrollcommand=self.graph_scroll.set)
-        """
-
         # buttons
         self.buttons = Frame(self.left, bg="grey", bd=5)
         self.buttons.pack(side=BOTTOM, fill=X)
@@ -108,22 +100,6 @@ class AuctionGUI():
         #card queue
         self.queue = Canvas(self.right, width=(self.width), bg="black")
         self.queue.pack(side=TOP, fill=Y, expand=1)
-        
-        # TESTING ONLY
-        """
-        self.station1 = space_station.SpaceStation("Super-Station", 12345)
-        self.station1.addCard(self.deck[0])
-        self.station1.addCard(self.deck[1])
-        self.station1.addCard(self.deck[2])
-        self.station1.addCard(self.deck[3])
-        self.station1.addCard(self.deck[4])
-        self.station1.addCard(self.deck[5])
-        self.station1.addCard(self.deck[6])
-        self.station1.addCard(self.deck[7])
-        self.station1.addCard(self.deck[8])
-        self.station1.addCard(self.deck[9])
-        self.draw_station(self.station1, 0)
-        """
 
     def step(self):
         self.advance_queue()
@@ -192,8 +168,6 @@ class AuctionGUI():
                                      font=("Helvetica", "22"), fill=self.colors[index2])
 
     # draws a card-like representation of a players space-station
-    # this will require significant changes to bidding_agent and space_station
-    # related to this, we need to discuss the changes to space_station
     def draw_station(self, station, index):
         self.root.update()
         width = self.graph.winfo_width()
@@ -207,7 +181,7 @@ class AuctionGUI():
         if l > 4:
             x = int(20 - l/2)
             
-        self.graph.create_rectangle(5+95*index,height-160,95*(index+1),height, fill="purple", outline="grey", width=2)
+        self.graph.create_rectangle(5+95*index,height-160,95*(index+1),height-5, fill="purple", outline="grey", width=2)
         self.graph.create_text(50+95*index,height-155, anchor=N, text="$"+str(station.getBudget(self.round)), font=("Helvetica", "22"))
         self.graph.create_text(50+95*index,height-22, anchor=CENTER, text=station.getName(), font=("Helvetica", str(x)), width=90)
 
@@ -236,12 +210,13 @@ class AuctionGUI():
     def scale(self, height, highest, bid):
         return (height-((bid/highest)*height))
 
+    # draws animated bars for each agents bid
     def makeBars(self, stations, bids):
         width = self.graph.winfo_width()
         height = self.graph.winfo_width() - 363
         players = len(bids)
-        barwidth = 80 #width/(players)
-        padding = 10 #barwidth/(players/2)
+        barwidth = 85 #width/(players)
+        padding = 15 #barwidth/(players/2)
         width = width+padding
 
         Rx = padding # right corner x value
@@ -257,9 +232,9 @@ class AuctionGUI():
             player_data=bids[i-1]
             bid = player_data[1]
             color = stations[i-1].getColor()
-            Rx = (barwidth*(i-1)) + padding
+            Rx = 15 + (i-1)*95#(barwidth*(i-1)) + padding
             bar_height = self.scale(height, highest, bid)
-            Lx = i*barwidth #barwidth*(i)
+            Lx = 85 + (i-1)*95
             start = height
             iterations = 120
             if bar_height == height:
@@ -272,14 +247,15 @@ class AuctionGUI():
                     self.graph.move(bar, 0, -(height/iterations))
                     self.root.update()
                     time.sleep(0.008)
-        
 
+    # displays a text message
     def add_history(self, message):
         self.T.config(state=NORMAL)
         self.T.insert(END, "\n" + message)
         self.T.see(END)
         self.T.config(state=DISABLED)
 
+    # moves the cards up in the visual queue
     def advance_queue(self):
         if self.deck:
             self.card = self.deck[0]
@@ -363,7 +339,6 @@ class AuctionGUI():
             self.display.append(self.graph.create_text(45+85*winner, 20, anchor=N, fill="#00e5e6", width = 75,
                         text="$"+str(price), font=("Helvetica", "12"),
                         justify=CENTER))'''
-            self.add_history("'"+stations[winner].getName()+"' won '"+self.card.getName()+"' for $"+str(price))
 
             '''#update total scores
             for i in range (len(stations)):
@@ -380,8 +355,9 @@ class AuctionGUI():
             for i in range(0, len(stations)):
                 self.draw_station(stations[i], i)
 
-            self.makeBars(stations, bids) 
+            self.makeBars(stations, bids)
 
+            self.add_history("'"+stations[winner].getName()+"' won '"+self.card.getName()+"' for $"+str(price))
 
             self.round += 1            
                        
