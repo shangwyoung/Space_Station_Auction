@@ -267,7 +267,6 @@ class AuctionGUI():
             
             iterations = 105
             increment = bar_size/iterations
-            print (increment)
             bar = self.graph.create_rectangle(Rx,Ry,Lx,Ly, fill=color, width=0)
             for j in range(iterations):
                 coords = self.graph.coords(bar)
@@ -279,12 +278,12 @@ class AuctionGUI():
                     else:
                         time.sleep(0.015)
                 elif increment > 2:
-                    time.sleep(0.012) #good
+                    time.sleep(0.012) 
                 elif increment > 1.5:
-                    time.sleep(0.0097) #good
+                    time.sleep(0.0097) 
                 elif increment > 1:
                     time.sleep(0.009)
-                elif increment > .47: #good
+                elif increment > .47: 
                     time.sleep(0.0047)
                 elif increment < .3:
                     time.sleep(0.0016)
