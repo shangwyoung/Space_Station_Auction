@@ -2,6 +2,7 @@ from tkinter import *
 import card_generator
 import card
 import space_station
+import time
 #import auctionSimulator
 
 class AuctionGUI():
@@ -206,7 +207,7 @@ class AuctionGUI():
         if l > 4:
             x = int(20 - l/2)
             
-        self.graph.create_rectangle(5+95*index,height-160,95*(index+1),height-5, fill="purple", outline="grey", width=2)
+        self.graph.create_rectangle(5+95*index,height-160,95*(index+1),height, fill="purple", outline="grey", width=2)
         self.graph.create_text(50+95*index,height-155, anchor=N, text="$"+str(station.getBudget(self.round)), font=("Helvetica", "22"))
         self.graph.create_text(50+95*index,height-22, anchor=CENTER, text=station.getName(), font=("Helvetica", str(x)), width=90)
 
@@ -222,6 +223,55 @@ class AuctionGUI():
             self.graph.create_rectangle(60+95*index,height-40-(scores[3]*2),74+95*index,height-40, fill=self.colors[3], outline="#202060", width=2)
         if scores[4] > 0:
             self.graph.create_rectangle(77+95*index,height-40-(scores[4]*2),91+95*index,height-40, fill=self.colors[4], outline="#202060", width=2)
+
+    def findhighest(self, bids):
+        x=bids[0]
+        highest=x[1]
+        for i in bids:
+            if i[1] > highest:
+                highest = i[1]
+        print(highest)
+        return highest
+
+    def scale(self, height, highest, bid):
+        return (height-((bid/highest)*height))
+
+    def makeBars(self, stations, bids):
+        width = self.graph.winfo_width()
+        height = self.graph.winfo_width() - 363
+        players = len(bids)
+        barwidth = 80 #width/(players)
+        padding = 10 #barwidth/(players/2)
+        width = width+padding
+
+        Rx = padding # right corner x value
+        #Uy would be equal to the height; is agent-specific (is equivocal to bid)
+        Lx = barwidth # left corner x value
+        #lower corners' y value is unchanging and always set at full 
+
+
+
+        highest = self.findhighest(bids)
+        for i in range(1,players+1):
+            bar = 0 #init canvas object
+            player_data=bids[i-1]
+            bid = player_data[1]
+            color = stations[i-1].getColor()
+            Rx = (barwidth*(i-1)) + padding
+            bar_height = self.scale(height, highest, bid)
+            Lx = i*barwidth #barwidth*(i)
+            start = height
+            iterations = 120
+            if bar_height == height:
+                time.sleep(0.1)
+                bar = self.graph.create_rectangle(Rx,bar_height, Lx, height, fill=color, outline=color)
+            else:
+                bar = self.graph.create_rectangle(Rx, height+bar_height, Lx, height*2, fill=color, outline=color)
+                self.graph.addtag_all(bar)   
+                for n in range(iterations):
+                    self.graph.move(bar, 0, -(height/iterations))
+                    self.root.update()
+                    time.sleep(0.008)
         
 
     def add_history(self, message):
@@ -329,6 +379,8 @@ class AuctionGUI():
             self.graph.create_image(0,0, anchor=NW, image=self.img)
             for i in range(0, len(stations)):
                 self.draw_station(stations[i], i)
+
+            self.makeBars(stations, bids) 
 
 
             self.round += 1            
