@@ -233,7 +233,7 @@ def main():
 
     #set up card generator
 
-    #card_generator = NickCardGenerator.NickCardGenerator(NUM_ROUNDS)
+    
     cards = card_generator.buildDeck(NUM_ROUNDS)
     GUI.add_deck(cards)
 
