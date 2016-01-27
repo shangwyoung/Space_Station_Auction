@@ -3,7 +3,7 @@ import random
 
 
 
-def genCard(prefCount,placeCount,suffCount):
+def genCard(prefCount,placeCount):
     #passed line counts
     def findWord(file):
         F= open(file, "r")
@@ -11,16 +11,13 @@ def genCard(prefCount,placeCount,suffCount):
             length= prefCount
         if file== "places.txt":
             length= placeCount
-        if file== "suffixes.txt":
-            length= suffCount
         num= random.randint(0, length)
         for i, line in enumerate(F):
             if i==num:
                 return line.strip()
     pref= findWord("prefixes.txt")
     place=findWord("places.txt")
-    suff=findWord("suffixes.txt")
-    name= (pref+" "+place+" "+suff)
+    name= (pref+" "+place)
     # generates name
     stats = [0,0,0,0,0]
 
@@ -43,10 +40,9 @@ def buildDeck(size):
     # returns the number of lines-1
     prefCount= lineCount("prefixes.txt")
     placeCount= lineCount("places.txt")
-    suffCount= lineCount("suffixes.txt")
     # determines the linecounts here so each file neads to to be gone through only once per deck
     deck = []
     for i in range(0, size):
-        deck.append(genCard(prefCount,placeCount,suffCount))
+        deck.append(genCard(prefCount,placeCount))
 
     return deck
