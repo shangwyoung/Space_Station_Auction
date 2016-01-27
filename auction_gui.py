@@ -16,7 +16,7 @@ class AuctionGUI():
         self.round = 0
         self.price = []
         self.display = []
-        self.deck = card_generator.buildDeck(10) #for testing
+        self.deck = []
 
         self.icons = [] #initialized below
         self.colors = ['cyan','#8cff1a','#ff66ff','yellow','#ff6666']
@@ -92,14 +92,21 @@ class AuctionGUI():
         self.right = Frame(self.root)
         self.right.pack(side=RIGHT, fill=Y)
 
+        
         # current card
+        """
         self.current = Canvas(self.right, width =(self.width),
                               height=(self.height), bg="black")
         self.current.pack(side=TOP)
+        """
 
         #card queue
-        self.queue = Canvas(self.right, width=(self.width), bg="black")
-        self.queue.pack(side=TOP, fill=Y, expand=1)
+        self.queue = Canvas(self.right, width=(self.width), bg="black", scrollregion=[0,0,self.width,(len(self.deck)-1)*70+self.height])
+        self.S2 = Scrollbar(self.right, orient=VERTICAL)
+        self.queue.pack(side=LEFT, fill=Y, expand=1)
+        self.S2.pack(side=RIGHT, fill=Y)
+        self.queue.config(yscrollcommand=self.S2.set)
+        self.S2.config(command=self.queue.yview)
 
     def step(self):
         self.advance_queue()
@@ -108,65 +115,37 @@ class AuctionGUI():
 
     # I think this method should probably take card as an arg instead of
     # searching the deck within the method, but we can discuss this -NM
-    def draw_card(self, card):
+    def draw_card(self, card, index):
         # consider seperate method for this (duplicated in draw_cardlet) or a card method.
         num = 0
-        index1 = 0
-        index2 = 0
+        icon1 = 0
+        icon2 = 0
         for i in range (0, len(card.getStats())):
             if card.getValue(i) > 0:
                 num += 1
                 if num == 1:
-                    index1 = i
+                    icon1 = i
                 else:
-                    index2 = i
-        self.create_rounded(self.current, 0,0,180,190, 30, 1, "#202060", self.borders[(index1+1)*(index2+1)])# old color is "#ffc34d"
-        self.create_rounded(self.current, 10,10,170,180, 20, 0, "#202060", "#202060")
-        self.current.create_text(90,20, anchor=N, fill=self.borders[(index1+1)*(index2+1)], width =150,
+                    icon2 = i
+        y = index*70
+        self.create_rounded(self.queue, 0,y,180,y+190, 30, 1, "#202060", self.borders[(icon1+1)*(icon2+1)])# old color is "#ffc34d"
+        self.create_rounded(self.queue, 10,y+10,170,y+180, 20, 0, "#202060", "#202060")
+        self.queue.create_text(90,y+20, anchor=N, fill=self.borders[(icon1+1)*(icon2+1)], width =150,
                                 text=card.getName(), font=("Helvetica", "16"),
                                 justify=CENTER)
         
         if num == 1:
-            self.current.create_image(78,150, anchor=W, image=self.icons[index1])
-            self.current.create_text(76, 150, anchor=E, text=card.getValue(index1),
-                                     font=("Helvetica", "22"), fill=self.colors[index1])
+            self.queue.create_image(78,y+150, anchor=W, image=self.icons[icon1])
+            self.queue.create_text(76, y+150, anchor=E, text=card.getValue(icon1),
+                                     font=("Helvetica", "22"), fill=self.colors[icon1])
         else:
-            self.current.create_image(38,150, anchor=W, image=self.icons[index1])
-            self.current.create_text(36, 150, anchor=E, text=card.getValue(index1),
-                                     font=("Helvetica", "22"), fill=self.colors[index1])
-            self.current.create_image(118,150, anchor=W, image=self.icons[index2])
-            self.current.create_text(116, 150, anchor=E, text=card.getValue(index2),
-                                     font=("Helvetica", "22"), fill=self.colors[index2])
+            self.queue.create_image(38,y+150, anchor=W, image=self.icons[icon1])
+            self.queue.create_text(36,y+150, anchor=E, text=card.getValue(icon1),
+                                     font=("Helvetica", "22"), fill=self.colors[icon1])
+            self.queue.create_image(118,y+150, anchor=W, image=self.icons[icon2])
+            self.queue.create_text(116,y+150, anchor=E, text=card.getValue(icon2),
+                                     font=("Helvetica", "22"), fill=self.colors[icon2])
                     
-
-    # draws a reduced version of a card which only has the symbols and colors
-    def draw_cardlet(self, card, index):
-        num = 0
-        index1 = 0
-        index2 = 0
-        for i in range (0, len(card.getStats())):
-            if card.getValue(i) > 0:
-                num += 1
-                if num == 1:
-                    index1 = i
-                else:
-                    index2 = i
-        y = index*78
-        self.create_rounded(self.queue, 0,y,180,76+y, 30, 1, "#202060", self.borders[(index1+1)*(index2+1)])
-        self.create_rounded(self.queue, 10,10+y,170,66+y, 20, 0, "#202060", "#202060")
-        
-        if num == 1:
-            self.queue.create_image(78,38+y, anchor=W, image=self.icons[index1])
-            self.queue.create_text(76, 38+y, anchor=E, text=card.getValue(index1),
-                                     font=("Helvetica", "22"), fill=self.colors[index1])
-        else:
-            self.queue.create_image(38,38+y, anchor=W, image=self.icons[index1])
-            self.queue.create_text(36, 38+y, anchor=E, text=card.getValue(index1),
-                                     font=("Helvetica", "22"), fill=self.colors[index1])
-            self.queue.create_image(118,38+y, anchor=W, image=self.icons[index2])
-            self.queue.create_text(116, 38+y, anchor=E, text=card.getValue(index2),
-                                     font=("Helvetica", "22"), fill=self.colors[index2])
-
     # draws a card-like representation of a players space-station
     def draw_station(self, station, index):
         self.root.update()
@@ -292,7 +271,7 @@ class AuctionGUI():
             if bar_size < 35:
                 self.graph.create_text(50 + i*95, height-bar_size-35, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
             else:
-                self.graph.create_text(50 + i*95, height-bar_size+10, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
+                self.graph.create_text(50 + i*95, height-bar_size, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
             self.root.update()
 
     # displays a text message
@@ -304,13 +283,13 @@ class AuctionGUI():
 
     # moves the cards up in the visual queue
     def advance_queue(self):
+        self.queue.config(scrollregion=[0,0,self.width,(len(self.deck)-1)*70+self.height])
         if self.deck:
-            self.card = self.deck[0]
-            self.draw_card(self.card)
-            self.deck.remove(self.deck[0])
             self.queue.delete(ALL)
-            for i in range(0, len(self.deck)):
-                self.draw_cardlet(self.deck[i], i)
+            for i in range(len(self.deck)-1, -1, -1):
+                self.draw_card(self.deck[i], i)
+            self.card = self.deck[0]
+            self.deck.remove(self.deck[0])
                 
     # draws the legend which shows the icons for each of the 5 categories
     def legend(self, event):
@@ -374,30 +353,8 @@ class AuctionGUI():
                         text="$"+str(bids[i][1]), font=("Helvetica", "12"),
                         justify=CENTER))
             
-            #give card to the winner   
-            '''self.display.append(self.graph.create_rectangle(5+85*winner, 5, 85+85*winner, 60, fill="#19334d", outline="#00e5e6", width=3))
-            self.display.append(self.graph.create_text(45+85*winner, 40, anchor=N, fill="#00e5e6", width = 75,
-                        text="[" + str(self.card.getValue(0)) +
-                       ", " + str(self.card.getValue(1)) +
-                       ", " + str(self.card.getValue(2)) +
-                       ", " + str(self.card.getValue(3)) +
-                       ", " + str(self.card.getValue(4)) + "]", font=("Helvetica", "12"),
-                        justify=CENTER))
-            self.display.append(self.graph.create_text(45+85*winner, 20, anchor=N, fill="#00e5e6", width = 75,
-                        text="$"+str(price), font=("Helvetica", "12"),
-                        justify=CENTER))'''
-
-            '''#update total scores
-            for i in range (len(stations)):
-                self.display.append(self.graph.create_text(45+85*i, 240, anchor=N, fill="#00e5e6", width = 75,
-                        text=stations[i].getScores(self.round), font=("Helvetica", "12"),
-                        justify=CENTER))
+            #give card to the winner TODO?
                 
-            #update budgets
-            for i in range (len(stations)):
-                self.display.append(self.graph.create_text(45+85*i, 195, anchor=N, fill="#00e5e6", width = 75,
-                        text="$"+str(stations[i].getBudget(self.round)), font=("Helvetica", "12"),
-                        justify=CENTER))'''
             self.graph.create_image(0,0, anchor=NW, image=self.img)
             for i in range(0, len(stations)):
                 self.draw_station(stations[i], i)
@@ -415,58 +372,6 @@ class AuctionGUI():
             #agent info
             for i in range(0, len(stations)):
                 self.draw_station(stations[i], i)
-            """
-            self.graph.create_rectangle(5, 100, 85, 170, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(45, 130, anchor=N, fill="#00e5e6", width = 75,
-                            text=self.stations[0][0].getName(), font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_rectangle(90, 100, 170, 170, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(130, 130, anchor=N, fill="#00e5e6", width = 75,
-                            text=self.stations[0][1].getName(), font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_rectangle(175, 100, 255, 170, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(215, 130, anchor=N, fill="#00e5e6", width = 75,
-                            text=self.stations[0][2].getName(), font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_rectangle(260, 100, 340, 170, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(300, 130, anchor=N, fill="#00e5e6", width = 75,
-                            text=self.stations[0][3].getName(), font=("Helvetica", "12"),
-                            justify=CENTER)
-            #station info - unchanged
-            self.graph.create_rectangle(5, 165, 85, 270, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(45, 175, anchor=N, fill="#00e5e6", width = 75,
-                            text="Budget: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_text(45, 220, anchor=N, fill="#00e5e6", width = 75,
-                            text="Total Scores: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            
-            self.graph.create_rectangle(90, 165, 170, 270, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(130, 175, anchor=N, fill="#00e5e6", width = 75,
-                            text="Budget: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_text(130, 220, anchor=N, fill="#00e5e6", width = 75,
-                            text="Total Scores: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            
-            self.graph.create_rectangle(175, 165, 255, 270, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(215, 175, anchor=N, fill="#00e5e6", width = 75,
-                            text="Budget: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_text(215, 220, anchor=N, fill="#00e5e6", width = 75,
-                            text="Total Scores: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            
-            self.graph.create_rectangle(260, 165, 340, 270, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(300, 175, anchor=N, fill="#00e5e6", width = 75,
-                            text="Budget: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_text(300, 220, anchor=N, fill="#00e5e6", width = 75,
-                            text="Total Scores: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            #station info - to be changed
-            """
-            
         else:
             self.stations.append(stations)
 
