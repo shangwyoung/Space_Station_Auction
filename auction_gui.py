@@ -92,10 +92,6 @@ class AuctionGUI():
         self.right = Frame(self.root)
         self.right.pack(side=RIGHT, fill=Y)
 
-        # current card
-        self.current = Canvas(self.right, width =(self.width),
-                              height=(self.height), bg="black")
-        self.current.pack(side=TOP)
 
         #card queue
         self.queue = Canvas(self.right, width=(self.width), bg="black", scrollregion=[0,0,self.width,(len(self.deck)-1)*70+self.height])
@@ -110,37 +106,38 @@ class AuctionGUI():
         self.update_info()
         
 
-    # I think this method should probably take card as an arg instead of
+     # I think this method should probably take card as an arg instead of
     # searching the deck within the method, but we can discuss this -NM
-    def draw_card(self, card):
+    def draw_card(self, card, index):
         # consider seperate method for this (duplicated in draw_cardlet) or a card method.
         num = 0
-        index1 = 0
-        index2 = 0
+        icon1 = 0
+        icon2 = 0
         for i in range (0, len(card.getStats())):
             if card.getValue(i) > 0:
                 num += 1
                 if num == 1:
-                    index1 = i
+                    icon1 = i
                 else:
-                    index2 = i
-        self.create_rounded(self.current, 0,0,180,190, 30, 1, "#202060", self.borders[(index1+1)*(index2+1)])# old color is "#ffc34d"
-        self.create_rounded(self.current, 10,10,170,180, 20, 0, "#202060", "#202060")
-        self.current.create_text(90,20, anchor=N, fill=self.borders[(index1+1)*(index2+1)], width =150,
+                    icon2 = i
+        y = index*70
+        self.create_rounded(self.queue, 0,y,180,y+190, 30, 1, "#202060", self.borders[(icon1+1)*(icon2+1)])# old color is "#ffc34d"
+        self.create_rounded(self.queue, 10,y+10,170,y+180, 20, 0, "#202060", "#202060")
+        self.queue.create_text(90,y+20, anchor=N, fill=self.borders[(icon1+1)*(icon2+1)], width =150,
                                 text=card.getName(), font=("Helvetica", "16"),
                                 justify=CENTER)
         
         if num == 1:
-            self.current.create_image(78,150, anchor=W, image=self.icons[index1])
-            self.current.create_text(76, 150, anchor=E, text=card.getValue(index1),
-                                     font=("Helvetica", "22"), fill=self.colors[index1])
+            self.queue.create_image(78,y+150, anchor=W, image=self.icons[icon1])
+            self.queue.create_text(76, y+150, anchor=E, text=card.getValue(icon1),
+                                     font=("Helvetica", "22"), fill=self.colors[icon1])
         else:
-            self.current.create_image(38,150, anchor=W, image=self.icons[index1])
-            self.current.create_text(36, 150, anchor=E, text=card.getValue(index1),
-                                     font=("Helvetica", "22"), fill=self.colors[index1])
-            self.current.create_image(118,150, anchor=W, image=self.icons[index2])
-            self.current.create_text(116, 150, anchor=E, text=card.getValue(index2),
-                                     font=("Helvetica", "22"), fill=self.colors[index2])
+            self.queue.create_image(38,y+150, anchor=W, image=self.icons[icon1])
+            self.queue.create_text(36,y+150, anchor=E, text=card.getValue(icon1),
+                                     font=("Helvetica", "22"), fill=self.colors[icon1])
+            self.queue.create_image(118,y+150, anchor=W, image=self.icons[icon2])
+            self.queue.create_text(116,y+150, anchor=E, text=card.getValue(icon2),
+                                     font=("Helvetica", "22"), fill=self.colors[icon2])
                     
 
     # draws a reduced version of a card which only has the symbols and colors
@@ -331,9 +328,9 @@ class AuctionGUI():
                 else:
                    time.sleep(0.002)
             if bar_size < 35:
-                self.graph.create_text(50 + i*95, height-bar_size-35, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
+                self.graph.create_text(((Lx-(barwidth/(2.55)))), height-bar_size-35, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
             else:
-                self.graph.create_text(50 + i*95, height-bar_size, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
+                self.graph.create_text(((Lx-(barwidth/(2.55)))), height-bar_size, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
             self.root.update()
 
     # displays a text message
@@ -343,15 +340,15 @@ class AuctionGUI():
         self.T.see(END)
         self.T.config(state=DISABLED)
 
-    # moves the cards up in the visual queue
+     # moves the cards up in the visual queue
     def advance_queue(self):
+        self.queue.config(scrollregion=[0,0,self.width,(len(self.deck)-1)*70+self.height])
         if self.deck:
-            self.card = self.deck[0]
-            self.draw_card(self.card)
-            self.deck.remove(self.deck[0])
             self.queue.delete(ALL)
-            for i in range(0, len(self.deck)):
-                self.draw_cardlet(self.deck[i], i)
+            for i in range(len(self.deck)-1, -1, -1):
+                self.draw_card(self.deck[i], i)
+            self.card = self.deck[0]
+            self.deck.remove(self.deck[0])
                 
     # draws the legend which shows the icons for each of the 5 categories
     def legend(self, event):
