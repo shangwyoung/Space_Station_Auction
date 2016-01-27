@@ -9,7 +9,7 @@ class agent1(biddingAgent.biddingAgent):
         return "A"
 
     def getColor(self):
-        return "green"
+        return "yellow"
 
     def getBid(self, card, index):
         return 5000

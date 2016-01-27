@@ -15,7 +15,7 @@ import signal
 from contextlib import contextmanager
 
 # game constants
-NUM_ROUNDS = 10
+NUM_ROUNDS = 1
 STARTING_BUDGET = 1000
 CARDS_PER_AGENT = 5
 
@@ -281,7 +281,7 @@ def main():
     #for i in range (len(space_stations)):
         stations_copy[i] = space_stations[i]
     sortedstations = sort_stations(stations_copy)
-    GUI.add_stations(sortedstations)
+    GUI.add_results(sortedstations)
     
  
 

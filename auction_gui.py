@@ -16,7 +16,8 @@ class AuctionGUI():
         self.round = 0
         self.price = []
         self.display = []
-        self.deck = card_generator.buildDeck(10) #for testing
+        self.deck = []
+        self.results = []
 
         self.icons = [] #initialized below
         self.colors = ['cyan','#8cff1a','#ff66ff','yellow','#ff6666']
@@ -41,6 +42,14 @@ class AuctionGUI():
         self.icons.append(self.culture)
         self.icons.append(self.commerce)
         self.icons.append(self.industry)
+
+        # For Results
+        self.scorepic = PhotoImage(file="highestScores.gif")
+        self.star1 = PhotoImage(file="star1.gif")
+        self.star2 = PhotoImage(file="star2.gif")
+        self.star3 = PhotoImage(file="star3.gif")
+        self.star4 = PhotoImage(file="star4.gif")
+        
 
         # *LEFT PANEL*
         self.left = Frame(self.root)
@@ -102,12 +111,12 @@ class AuctionGUI():
         self.queue.pack(side=TOP, fill=Y, expand=1)
 
     def step(self):
-        if len(self.stations) > 2:
-            self.advance_queue()
-            self.update_info()
+        #if len(self.stations) > 2:
+        #    self.advance_queue()
+        #    self.update_info()
             
-        elif len(self.stations) == 2:
-            self.give_result()
+        #elif len(self.stations) == 2:
+        self.give_result()
         
 
     # I think this method should probably take card as an arg instead of
@@ -488,13 +497,31 @@ class AuctionGUI():
     def update_price(self, price):
         self.price.append(price)
 
+    def add_results(self,stations):
+        self.results = stations
+
     def give_result(self):
         if len(self.stations)>1 :
             print("giving result")
-            stations = self.stations[1]
+            stations = self.results
+            x = 180
+            y = 180
+            z = 600
         
-            for i in range(0, len(stations)):
-                self.draw_station(stations[i], i)
+            #for i in range(0, len(stations)):
+            #    self.draw_station(stations[i], i)
+            self.graph.create_image(0,0, anchor=NW, image=self.img)
+            self.graph.create_image(150, 100, image=self.scorepic, anchor=W)
+            for i in range (len(stations)):
+                text1 = repr(i+1)+".  "+str(stations[i].getName())
+                self.graph.create_text(x, y+50*i, anchor=W, fill=stations[i].getColor(), text = text1, font = ("Helvetica", "15"))
+                text2 = "Score: "+str(stations[i].getRank())
+#                self.graph.create_text(z, y+50*i, anchor=E, fill=stations[i].getColor(), text = text2, font = ("Helvetica", "15"))
+                if i>2:
+                    self.graph.create_image(650, y+50*i, image=self.star4, anchor=W)
+            self.graph.create_image(650, 180, image=self.star1, anchor=W)
+            self.graph.create_image(650, 230, image=self.star2, anchor=W)
+            self.graph.create_image(650, 280, image=self.star3, anchor=W)
             self.stations.remove(self.stations[1])
 
 
