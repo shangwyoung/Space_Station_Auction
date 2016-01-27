@@ -16,7 +16,7 @@ class AuctionGUI():
         self.round = 0
         self.price = []
         self.display = []
-        self.deck = card_generator.buildDeck(10) #for testing
+        self.deck = []
 
         self.icons = [] #initialized below
         self.colors = ['cyan','#8cff1a','#ff66ff','yellow','#ff6666']
