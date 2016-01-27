@@ -551,14 +551,14 @@ class AuctionGUI():
             self.graph.create_image(150, 100, image=self.scorepic, anchor=W)
             for i in range (len(stations)):
                 text1 = repr(i+1)+".  "+str(stations[i].getName())
-                self.graph.create_text(x, y+50*i, anchor=W, fill=stations[i].getColor(), text = text1, font = ("Helvetica", "18", "italic"))
+                self.graph.create_text(x, y+40*i, anchor=W, fill=stations[i].getColor(), text = text1, font = ("Courier", "15"))
                 text2 = "Score: "+str(stations[i].getRank())
-                self.graph.create_text(z, y+50*i, anchor=E, fill=stations[i].getColor(), text = text2, font = ("Helvetica", "18", "italic"))
+                self.graph.create_text(z, y+40*i, anchor=E, fill=stations[i].getColor(), text = text2, font = ("Courier", "15", "italic"))
                 #if i>2:
                 #    self.graph.create_image(650, y+50*i, image=self.star4, anchor=W)
             self.graph.create_image(600, 180, image=self.star1, anchor=W)
-            self.graph.create_image(600, 230, image=self.star2, anchor=W)
-            self.graph.create_image(600, 280, image=self.star3, anchor=W)
+            self.graph.create_image(600, 220, image=self.star2, anchor=W)
+            self.graph.create_image(600, 260, image=self.star3, anchor=W)
             self.stations.remove(self.stations[1])
 
 
