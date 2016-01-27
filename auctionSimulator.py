@@ -15,7 +15,7 @@ import signal
 from contextlib import contextmanager
 
 # game constants
-NUM_ROUNDS = 10
+NUM_ROUNDS = 20
 STARTING_BUDGET = 1000
 CARDS_PER_AGENT = 5
 

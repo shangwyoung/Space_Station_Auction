@@ -16,7 +16,7 @@ class AuctionGUI():
         self.round = 0
         self.price = []
         self.display = []
-        self.deck = card_generator.buildDeck(10) #for testing
+        self.deck = []
 
         self.icons = [] #initialized below
         self.colors = ['cyan','#8cff1a','#ff66ff','yellow','#ff6666']
@@ -65,6 +65,9 @@ class AuctionGUI():
         self.S.config(command=self.T.yview)
         self.T.config(yscrollcommand=self.S.set)
 
+        self.T.bind('<4>', lambda event : self.T.yview('scroll', -1, 'units'))
+        self.T.bind('<5>', lambda event : self.T.yview('scroll', 1, 'units'))
+
         # canvas for player info, graph, etc
         self.graph = Canvas(self.left, bg="black", scrollregion=[0,0,2592,1728], width=800, height=600)
 
@@ -100,13 +103,16 @@ class AuctionGUI():
         self.right.pack(side=RIGHT, fill=Y)
 
 
-        #card queue
-        self.queue = Canvas(self.right, width=(self.width), bg="black", scrollregion=[0,0,self.width,(len(self.deck)-1)*70+self.height])
+        # card queue
         self.S2 = Scrollbar(self.right, orient=VERTICAL)
-        self.queue.pack(side=LEFT, fill=Y, expand=1)
+        self.queue = Canvas(self.right, width=(self.width), bg="black", scrollregion=[0,0,self.width,(len(self.deck)-1)*70+self.height])
         self.S2.pack(side=RIGHT, fill=Y)
-        self.queue.config(yscrollcommand=self.S2.set)
+        self.queue.pack(side=LEFT, fill=Y, expand=1)
         self.S2.config(command=self.queue.yview)
+        self.queue.config(yscrollcommand=self.S2.set)
+
+        self.queue.bind('<4>', lambda event : self.queue.yview('scroll', -1, 'units'))
+        self.queue.bind('<5>', lambda event : self.queue.yview('scroll', 1, 'units'))
 
     def step(self):
         if len(self.deck) > 0:
@@ -116,9 +122,6 @@ class AuctionGUI():
         elif len(self.deck) == 0:
             self.give_result()
         
-
-     # I think this method should probably take card as an arg instead of
-    # searching the deck within the method, but we can discuss this -NM
     def draw_card(self, card, index):
         # consider seperate method for this (duplicated in draw_cardlet) or a card method.
         num = 0
@@ -132,7 +135,7 @@ class AuctionGUI():
                 else:
                     icon2 = i
         y = index*70
-        self.create_rounded(self.queue, 0,y,180,y+190, 30, 1, "#202060", self.borders[(icon1+1)*(icon2+1)])# old color is "#ffc34d"
+        self.create_rounded(self.queue, 0,y,180,y+190, 30, 1, "#202060", self.borders[(icon1+1)*(icon2+1)])
         self.create_rounded(self.queue, 10,y+10,170,y+180, 20, 0, "#202060", "#202060")
         self.queue.create_text(90,y+20, anchor=N, fill=self.borders[(icon1+1)*(icon2+1)], width =150,
                                 text=card.getName(), font=("Helvetica", "16"),
@@ -149,8 +152,7 @@ class AuctionGUI():
             self.queue.create_image(118,y+150, anchor=W, image=self.icons[icon2])
             self.queue.create_text(116,y+150, anchor=E, text=card.getValue(icon2),
                                      font=("Helvetica", "22"), fill=self.colors[icon2])
-                    
-
+            
     # draws a reduced version of a card which only has the symbols and colors
     def draw_cardlet(self, card, index):
         num = 0
@@ -221,24 +223,6 @@ class AuctionGUI():
             self.graph.create_rectangle(barcord+(tinybar*3), height-40-(scores[3]*2), barcord+(tinybar*4), height-40, fill=self.colors[3], outline=outline, width=2)
         if scores[4] > 0:
             self.graph.create_rectangle(barcord+(tinybar*4), height-40-(scores[4]*2), barcord+(tinybar*5), height-40, fill=self.colors[4], outline=outline, width=2)
-
-    
-##        self.graph.create_rectangle(5+95*index,height-160,95*(index+1),height-5, fill="purple", outline="grey", width=2)
-##        self.graph.create_text(50+95*index,height-155, anchor=N, text="$"+str(station.getBudget(self.round)), font=("Helvetica", "22"))
-##        self.graph.create_text(50+95*index,height-22, anchor=CENTER, text=station.getName(), font=("Helvetica", str(x)), width=90)
-##
-##        scores = station.getScores(self.round)
-##
-##        if scores[0] > 0:
-##            self.graph.create_rectangle(9+95*index,height-40-(scores[0]*2),23+95*index,height-40, fill=self.colors[0], outline="#202060", width=2)
-##        if scores[1] > 0:
-##            self.graph.create_rectangle(26+95*index,height-40-(scores[1]*2),40+95*index,height-40, fill=self.colors[1], outline="#202060", width=2)
-##        if scores[2] > 0:
-##            self.graph.create_rectangle(43+95*index,height-40-(scores[2]*2),57+95*index,height-40, fill=self.colors[2], outline="#202060", width=2)
-##        if scores[3] > 0:
-##            self.graph.create_rectangle(60+95*index,height-40-(scores[3]*2),74+95*index,height-40, fill=self.colors[3], outline="#202060", width=2)
-##        if scores[4] > 0:
-##            self.graph.create_rectangle(77+95*index,height-40-(scores[4]*2),91+95*index,height-40, fill=self.colors[4], outline="#202060", width=2)
 
     def findhighest(self, bids):
         x=bids[0]
