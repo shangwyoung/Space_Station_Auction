@@ -274,8 +274,14 @@ def main():
     
     
     #do scoring
-    #sortedstations = sort_stations(space_stations)
-    #GUI.add_stations(sortedstations)
+    print("about to ssort")
+    stations_copy = []
+    for i in range (len(space_stations)):
+        stations_copy.append(0)
+    #for i in range (len(space_stations)):
+        stations_copy[i] = space_stations[i]
+    sortedstations = sort_stations(stations_copy)
+    GUI.add_stations(sortedstations)
     
  
 
