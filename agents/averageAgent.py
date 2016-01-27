@@ -11,7 +11,7 @@ class AverageAgent(biddingAgent.biddingAgent):
         return "Average"
 
     def getColor(self):
-        return "#24ee93"
+        return "#7b26d9"
 
 # Bids the average of all previous winning bids
     def getBid(self, card, index):
