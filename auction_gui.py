@@ -289,6 +289,11 @@ class AuctionGUI():
                     time.sleep(0.0016)
                 else:
                    time.sleep(0.002)
+            if bar_size < 35:
+                self.graph.create_text(50 + i*95, height-bar_size-35, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
+            else:
+                self.graph.create_text(50 + i*95, height-bar_size+10, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
+            self.root.update()
 
     # displays a text message
     def add_history(self, message):
