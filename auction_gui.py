@@ -21,8 +21,8 @@ class AuctionGUI():
         self.icons = [] #initialized below
         self.colors = ['cyan','#8cff1a','#ff66ff','yellow','#ff6666']
         #experimental
-        self.borders =['','cyan','#00b1b3','#3333ff','#009933','purple','grey','','#8cff1a','','yellow','','red','','','magenta','','','','', 'orange']
-      
+        self.borders =['','cyan','#00b1b3','#3333ff','#009933','purple','grey','','#8cff1a','',
+                       'yellow','','red','','','magenta','','','','', 'orange']
 
     def initialize_graphics(self):
 
@@ -30,7 +30,7 @@ class AuctionGUI():
         self.root = Tk()
         self.root.title("Space Station Auction!")
         
-        # Icons!
+        # card icons
         self.science = PhotoImage(file="science.gif")
         self.ecology = PhotoImage(file="ecology.gif")
         self.culture = PhotoImage(file="culture.gif")
@@ -42,14 +42,15 @@ class AuctionGUI():
         self.icons.append(self.commerce)
         self.icons.append(self.industry)
 
-        # For Results
+        # for displaying ranking
         self.scorepic = PhotoImage(file="highestScores.gif")
         self.star1 = PhotoImage(file="star1.gif")
         self.star2 = PhotoImage(file="star2.gif")
         self.star3 = PhotoImage(file="star3.gif")
         self.star4 = PhotoImage(file="star4.gif")
 
-        # *LEFT PANEL*
+
+        #================== LEFT PANEL ======================
         self.left = Frame(self.root)
         self.left.pack(side=LEFT, fill=BOTH, expand=1)
 
@@ -57,16 +58,14 @@ class AuctionGUI():
         self.bid_history = Frame(self.left)
         self.bid_history.pack(side=TOP, fill=X)
 
-        self.S = Scrollbar(self.bid_history)
-        self.T = Text(self.bid_history, height=4, bg="black", fg="green",
-                      state=DISABLED)
-        self.S.pack(side=RIGHT, fill=Y)
-        self.T.pack(side=LEFT, fill=X, expand=1)
-        self.S.config(command=self.T.yview)
-        self.T.config(yscrollcommand=self.S.set)
+        self.history = Text(self.bid_history, height=4, bg="black", fg="green", state=DISABLED)
+        self.scroll = Scrollbar(self.bid_history, command=self.history.yview)
+        self.history.config(yscrollcommand=self.scroll.set)
+        self.history.pack(side=LEFT, fill=X, expand=1)
+        self.scroll.pack(side=RIGHT, fill=Y)
 
-        self.T.bind('<4>', lambda event : self.T.yview('scroll', -1, 'units'))
-        self.T.bind('<5>', lambda event : self.T.yview('scroll', 1, 'units'))
+        self.history.bind('<4>', lambda event : self.history.yview('scroll', -1, 'units'))
+        self.history.bind('<5>', lambda event : self.history.yview('scroll', 1, 'units'))
 
         # canvas for player info, graph, etc
         self.graph = Canvas(self.left, bg="black", scrollregion=[0,0,2592,1728], width=800, height=600)
@@ -76,43 +75,48 @@ class AuctionGUI():
 
         self.graph.pack(side=TOP, fill=BOTH, expand=1)
 
+        self.graph.bind('<Configure>', self.configure)
+
         # buttons
         self.buttons = Frame(self.left, bg="grey", bd=5)
         self.buttons.pack(side=BOTTOM, fill=X)
 
-        self.play_pause_button = Button(self.buttons, bg="#33ff33", text="PLAY",
-                                        width=10, activebackground="green")
-        self.step_button = Button(self.buttons, bg="#ffff33", text="STEP",
-                                  width=10, command=self.step, activebackground="yellow")
-        self.quit_button = Button(self.buttons, bg="#ff3333", text="QUIT",
-                                  width=10, command=self.root.destroy, activebackground="red")
-        self.legend_button = Button(self.buttons, bg="grey", text="LEGEND",
-                                  width=7, relief=GROOVE)
+        self.play_pause_button = Button(self.buttons, bg="#33ff33", text="PLAY", width=10, activebackground="green")
+        self.step_button = Button(self.buttons, bg="#ffff33", text="STEP", width=10, command=self.step, activebackground="yellow")
+        self.quit_button = Button(self.buttons, bg="#ff3333", text="QUIT", width=10, command=self.root.destroy, activebackground="red")
+        self.legend_button = Label(self.buttons, bg="grey", text="LEGEND", width=7, relief=GROOVE, padx=5)
 
         self.play_pause_button.pack(side=LEFT)
         self.step_button.pack(side=LEFT, padx=20)
         self.quit_button.pack(side=LEFT)
         self.legend_button.pack(side=RIGHT)
         
-        # bindings for [?] button
+        # bindings for legend
         self.legend_button.bind('<Enter>', self.legend)
         self.legend_button.bind('<Leave>', self.remove_legend)
+        
 
-        # *RIGHT PANEL*
+        #=============== LEFT PANEL (card queue) ===================
         self.right = Frame(self.root)
         self.right.pack(side=RIGHT, fill=Y)
 
-
-        # card queue
-        self.S2 = Scrollbar(self.right, orient=VERTICAL)
         self.queue = Canvas(self.right, width=(self.width), bg="black", scrollregion=[0,0,self.width,(len(self.deck)-1)*70+self.height])
-        self.S2.pack(side=RIGHT, fill=Y)
+        self.scroll2 = Scrollbar(self.right, orient=VERTICAL, command=self.queue.yview)
+        self.queue.config(yscrollcommand=self.scroll2.set)
         self.queue.pack(side=LEFT, fill=Y, expand=1)
-        self.S2.config(command=self.queue.yview)
-        self.queue.config(yscrollcommand=self.S2.set)
+        self.scroll2.pack(side=RIGHT, fill=Y)
 
         self.queue.bind('<4>', lambda event : self.queue.yview('scroll', -1, 'units'))
         self.queue.bind('<5>', lambda event : self.queue.yview('scroll', 1, 'units'))
+
+    def configure(self, event):
+        stations = self.stations[1]
+        bids = self.bids[1]
+        self.graph.create_image(0,0, anchor=NW, image=self.img)
+        for i in range(0, len(stations)):
+            self.draw_station(stations[i], i, len(stations))
+
+        self.draw_bars(stations, bids)
 
     def step(self):
         if len(self.deck) > 0:
@@ -326,10 +330,10 @@ class AuctionGUI():
 
     # displays a text message
     def add_history(self, message):
-        self.T.config(state=NORMAL)
-        self.T.insert(END, "\n" + message)
-        self.T.see(END)
-        self.T.config(state=DISABLED)
+        self.history.config(state=NORMAL)
+        self.history.insert(END, "\n" + message)
+        self.history.see(END)
+        self.history.config(state=DISABLED)
 
      # moves the cards up in the visual queue
     def advance_queue(self):
