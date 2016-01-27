@@ -2,20 +2,14 @@ from tkinter import *
 import card_generator
 import card
 import space_station
-<<<<<<< HEAD
-=======
 import time
 #import auctionSimulator
->>>>>>> master
 
 class AuctionGUI():
     
     def __init__(self, width, height):
         self.width = width
         self.height = height
-<<<<<<< HEAD
-        self.deck = card_generator.buildDeck(100)
-=======
         self.bids = []
         self.winner = []
         self.stations = []
@@ -24,26 +18,18 @@ class AuctionGUI():
         self.display = []
         self.deck = card_generator.buildDeck(10) #for testing
 
->>>>>>> master
         self.icons = [] #initialized below
         self.colors = ['cyan','#8cff1a','#ff66ff','yellow','#ff6666']
         #experimental
         self.borders =['','cyan','#00b1b3','#3333ff','#009933','purple','grey','','#8cff1a','','yellow','','red','','','magenta','','','','', 'orange']
-<<<<<<< HEAD
-=======
       
->>>>>>> master
 
     def initialize_graphics(self):
 
         # ROOT WINDOW
         self.root = Tk()
         self.root.title("Space Station Auction!")
-<<<<<<< HEAD
-
-=======
         
->>>>>>> master
         # Icons!
         self.science = PhotoImage(file="science.gif")
         self.ecology = PhotoImage(file="ecology.gif")
@@ -55,6 +41,13 @@ class AuctionGUI():
         self.icons.append(self.culture)
         self.icons.append(self.commerce)
         self.icons.append(self.industry)
+
+        # For Results
+        self.scorepic = PhotoImage(file="highestScores.gif")
+        self.star1 = PhotoImage(file="star1.gif")
+        self.star2 = PhotoImage(file="star2.gif")
+        self.star3 = PhotoImage(file="star3.gif")
+        self.star4 = PhotoImage(file="star4.gif")
 
         # *LEFT PANEL*
         self.left = Frame(self.root)
@@ -73,28 +66,13 @@ class AuctionGUI():
         self.T.config(yscrollcommand=self.S.set)
 
         # canvas for player info, graph, etc
-<<<<<<< HEAD
-        self.graph = Canvas(self.left, bg="black", scrollregion=[0,0,2592,1728])
-=======
         self.graph = Canvas(self.left, bg="black", scrollregion=[0,0,2592,1728], width=800, height=600)
->>>>>>> master
 
         self.img = PhotoImage(file="background.ppm")
         self.graph.create_image(0,0, anchor=NW, image=self.img)
 
         self.graph.pack(side=TOP, fill=BOTH, expand=1)
 
-<<<<<<< HEAD
-        # graph scrollbar
-        """
-        self.graph_scroll = Scrollbar(self.left, orient=HORIZONTAL,
-                command=self.graph.xview)
-        self.graph_scroll.pack(side=TOP, fill=X)
-        self.graph.config(xscrollcommand=self.graph_scroll.set)
-        """
-
-=======
->>>>>>> master
         # buttons
         self.buttons = Frame(self.left, bg="grey", bd=5)
         self.buttons.pack(side=BOTTOM, fill=X)
@@ -112,59 +90,12 @@ class AuctionGUI():
         self.step_button.pack(side=LEFT, padx=20)
         self.quit_button.pack(side=LEFT)
         self.legend_button.pack(side=RIGHT)
-<<<<<<< HEAD
-
-=======
         
->>>>>>> master
         # bindings for [?] button
         self.legend_button.bind('<Enter>', self.legend)
         self.legend_button.bind('<Leave>', self.remove_legend)
 
         # *RIGHT PANEL*
-<<<<<<< HEAD
-        self.right = Frame(self.root, bd=0)
-        self.right.pack(side=RIGHT, fill=Y)
-
-        # current card
-        self.current = Canvas(self.right, width =(self.width),
-                              height=(self.height), bg="black", bd=0)
-        self.current.pack(side=TOP)
-
-        #card queue
-        self.queue = Canvas(self.right, width=(self.width), bg="black", bd=0)
-        self.queue.pack(side=TOP, fill=Y, expand=1)
-
-
-        # TESTING ONLY
-        self.station1 = space_station.SpaceStation("Super-Station", 12345)
-        self.station1.addCard(self.deck[0])
-        self.station1.addCard(self.deck[1])
-        self.station1.addCard(self.deck[2])
-        self.station1.addCard(self.deck[3])
-        self.station1.addCard(self.deck[4])
-        self.station1.addCard(self.deck[5])
-        self.station1.addCard(self.deck[6])
-        self.station1.addCard(self.deck[7])
-        self.station1.addCard(self.deck[8])
-        self.station1.addCard(self.deck[9])
-        self.draw_station(self.station1, 0)
-        self.draw_station(self.station1, 1)
-        self.draw_station(self.station1, 2)
-        self.draw_station(self.station1, 3)
-
-    def step(self):
-        self.add_history(self.deck[0].getName() + " is now current. (TEST)")
-        self.advance_queue()
-
-    # I think this method should probably take card as an arg instead of
-    # searching the deck within the method, but we can discuss this -NM
-    def draw_card(self, card):
-        # consider seperate method for this (duplicated in draw_cardlet) or a card method.
-        num = 0
-        index1 = 0
-        index2 = 0
-=======
         self.right = Frame(self.root)
         self.right.pack(side=RIGHT, fill=Y)
 
@@ -178,8 +109,12 @@ class AuctionGUI():
         self.S2.config(command=self.queue.yview)
 
     def step(self):
-        self.advance_queue()
-        self.update_info()
+        if len(self.deck) > 0:
+            self.advance_queue()
+            self.update_info()
+            
+        elif len(self.deck) == 0:
+            self.give_result()
         
 
      # I think this method should probably take card as an arg instead of
@@ -189,19 +124,10 @@ class AuctionGUI():
         num = 0
         icon1 = 0
         icon2 = 0
->>>>>>> master
         for i in range (0, len(card.getStats())):
             if card.getValue(i) > 0:
                 num += 1
                 if num == 1:
-<<<<<<< HEAD
-                    index1 = i
-                else:
-                    index2 = i
-        self.create_rounded(self.current, 0,0,180,190, 30, 1, "#202060", self.borders[(index1+1)*(index2+1)])# old color is "#ffc34d"
-        self.create_rounded(self.current, 10,10,170,180, 20, 0, "#202060", "#202060")
-        self.current.create_text(90,20, anchor=N, fill=self.borders[(index1+1)*(index2+1)], width =150,
-=======
                     icon1 = i
                 else:
                     icon2 = i
@@ -209,23 +135,10 @@ class AuctionGUI():
         self.create_rounded(self.queue, 0,y,180,y+190, 30, 1, "#202060", self.borders[(icon1+1)*(icon2+1)])# old color is "#ffc34d"
         self.create_rounded(self.queue, 10,y+10,170,y+180, 20, 0, "#202060", "#202060")
         self.queue.create_text(90,y+20, anchor=N, fill=self.borders[(icon1+1)*(icon2+1)], width =150,
->>>>>>> master
                                 text=card.getName(), font=("Helvetica", "16"),
                                 justify=CENTER)
         
         if num == 1:
-<<<<<<< HEAD
-            self.current.create_image(78,150, anchor=W, image=self.icons[index1])
-            self.current.create_text(76, 150, anchor=E, text=card.getValue(index1),
-                                     font=("Helvetica", "22"), fill=self.colors[index1])
-        else:
-            self.current.create_image(38,150, anchor=W, image=self.icons[index1])
-            self.current.create_text(36, 150, anchor=E, text=card.getValue(index1),
-                                     font=("Helvetica", "22"), fill=self.colors[index1])
-            self.current.create_image(118,150, anchor=W, image=self.icons[index2])
-            self.current.create_text(116, 150, anchor=E, text=card.getValue(index2),
-                                     font=("Helvetica", "22"), fill=self.colors[index2])
-=======
             self.queue.create_image(78,y+150, anchor=W, image=self.icons[icon1])
             self.queue.create_text(76, y+150, anchor=E, text=card.getValue(icon1),
                                      font=("Helvetica", "22"), fill=self.colors[icon1])
@@ -236,7 +149,6 @@ class AuctionGUI():
             self.queue.create_image(118,y+150, anchor=W, image=self.icons[icon2])
             self.queue.create_text(116,y+150, anchor=E, text=card.getValue(icon2),
                                      font=("Helvetica", "22"), fill=self.colors[icon2])
->>>>>>> master
                     
 
     # draws a reduced version of a card which only has the symbols and colors
@@ -267,35 +179,6 @@ class AuctionGUI():
             self.queue.create_text(116, 38+y, anchor=E, text=card.getValue(index2),
                                      font=("Helvetica", "22"), fill=self.colors[index2])
 
-<<<<<<< HEAD
-    # draws a black box over the cardlet at the given index
-    def erase_cardlet(self, index):
-        y = index*78
-        self.queue.create_rectangle(0,y,190,70+y, 30, 0, "black", "black")
-
-    # draws a card-like representation of a players space-station
-    # this will require significant changes to bidding_agent and space_station
-    def draw_station(self, station, index):
-        self.root.update()
-        width = self.graph.winfo_width()
-        height = self.graph.winfo_height()
-        self.graph.create_rectangle(5+95*index,height-160,95*(index+1),height-5, fill="purple", outline="grey", width=2)
-        self.graph.create_text(50+95*index,height-155, anchor=N, text="$999", font=("Helvetica", "22"))
-        self.graph.create_text(50+95*index,height-5, anchor=S, text="TEST", font=("Helvetica", "22")) #name will need to scale to size of name
-
-        if station.getValue(0) > 0:
-            self.graph.create_rectangle(9+95*index,height-40-(station.getValue(0)*2),23+95*index,height-40, fill=self.colors[0], outline="#202060", width=2)
-        if station.getValue(1) > 0:
-            self.graph.create_rectangle(26+95*index,height-40-(station.getValue(1)*2),40+95*index,height-40, fill=self.colors[1], outline="#202060", width=2)
-        if station.getValue(2) > 0:
-            self.graph.create_rectangle(43+95*index,height-40-(station.getValue(2)*2),57+95*index,height-40, fill=self.colors[2], outline="#202060", width=2)
-        if station.getValue(3) > 0:
-            self.graph.create_rectangle(60+95*index,height-40-(station.getValue(3)*2),74+95*index,height-40, fill=self.colors[3], outline="#202060", width=2)
-        if station.getValue(4) > 0:
-            self.graph.create_rectangle(77+95*index,height-40-(station.getValue(4)*2),91+95*index,height-40, fill=self.colors[4], outline="#202060", width=2)
-
-    # adds a new line of text to the bid history window
-=======
     # draws a card-like representation of a players space-station
     def draw_station(self, station, index, num_stations):
         self.root.update()
@@ -458,25 +341,12 @@ class AuctionGUI():
             self.root.update()
 
     # displays a text message
->>>>>>> master
     def add_history(self, message):
         self.T.config(state=NORMAL)
         self.T.insert(END, "\n" + message)
         self.T.see(END)
         self.T.config(state=DISABLED)
 
-<<<<<<< HEAD
-    # draws the next card in the stack, removes it, and draws the remaining queue
-    def advance_queue(self):
-        if self.deck:
-            card = self.deck[0]
-            self.draw_card(card)
-            self.deck.remove(self.deck[0])
-            self.queue.delete(ALL)
-            for i in range(0, len(self.deck)):
-                self.draw_cardlet(self.deck[i], i)
-
-=======
      # moves the cards up in the visual queue
     def advance_queue(self):
         self.queue.config(scrollregion=[0,0,self.width,(len(self.deck)-1)*70+self.height])
@@ -487,7 +357,6 @@ class AuctionGUI():
             self.card = self.deck[0]
             self.deck.remove(self.deck[0])
                 
->>>>>>> master
     # draws the legend which shows the icons for each of the 5 categories
     def legend(self, event):
         width = self.graph.winfo_width()
@@ -529,21 +398,6 @@ class AuctionGUI():
 
         canvas.create_rectangle(x1+r/2-w/2, y1+w/2, x2-r/2+w/2, y2-w/2, fill=f, width=0)
         canvas.create_rectangle(x1+w/2, y1+r/2-w/2, x2-w/2, y2-r/2+w/2, fill=f, width=0)
-<<<<<<< HEAD
-        
-        
-def main():
-    gui = AuctionGUI(180, 190)
-    gui.initialize_graphics()
-    gui.add_history("player5 won 'Puppy Cloning Center' for $100")
-    gui.add_history("There was a tie for best bid, but player2 won 'Defensive Weapons Array' for $85")
-    gui.add_history("player2 won 'Emergency Escape Pod' for $95")
-    gui.add_history("player7 won 'Oxygen Farm' for $300")
-    gui.add_history("player0 won 'Interstellar Party Beacon' for $250")
-    gui.root.mainloop()
-
-main()
-=======
                 
     def update_info(self):
         #delete current price and card
@@ -599,4 +453,29 @@ main()
     def update_price(self, price):
         self.price.append(price)
 
->>>>>>> master
+    def add_results(self,stations):
+        self.results = stations
+
+    def give_result(self):
+        print("giving result")
+        stations = self.results
+        x = 150
+        y = 180
+        z = 550
+    
+        #for i in range(0, len(stations)):
+        #    self.draw_station(stations[i], i)
+        self.graph.create_image(0,0, anchor=NW, image=self.img)
+        self.graph.create_image(150, 100, image=self.scorepic, anchor=W)
+        for i in range (len(stations)):
+            text1 = repr(i+1)+".  "+str(stations[i].getName())
+            self.graph.create_text(x, y+40*i, anchor=W, fill=stations[i].getColor(), text = text1, font = ("Courier", "15"))
+            text2 = "Score: "+str(stations[i].getRank())
+            self.graph.create_text(z, y+40*i, anchor=E, fill=stations[i].getColor(), text = text2, font = ("Courier", "15", "italic"))
+            #if i>2:
+            #    self.graph.create_image(650, y+50*i, image=self.star4, anchor=W)
+        self.graph.create_image(600, 180, image=self.star1, anchor=W)
+        self.graph.create_image(600, 220, image=self.star2, anchor=W)
+        self.graph.create_image(600, 260, image=self.star3, anchor=W)
+        self.stations.remove(self.stations[1])
+
