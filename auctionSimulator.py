@@ -90,22 +90,6 @@ def make_space_stations(agents):
     GUI.add_stations(stations)
     return stations
 
-
-#generates the cards for a round. this can be replaced with
-#any scheme for generating cards, this randomizer is a place-holder
-#it doesn't follow the reqiured rules or anything
-##def generate_cards(num, round_number):
-##    cards = []
-##    for i in range(num):
-##        name = "".join(random.choice(string.ascii_letters) for i in range(10)) 
-##        cards.append(card.Card(name, random.randint(0, 8), random.randint(0, 8),
-##                          random.randint(0, 8), random.randint(0, 8),
-##                          random.randint(0, 8)))
-##    return cards
-    
-
-#does a round of bids
-#
 #params: the round number, the card being bid on
 def get_bids(card, index, agents, budgets):
     UI.on_auction_started(card)
@@ -157,59 +141,6 @@ def sort_stations(stations):
     sorter = sortSpaceStations.SortSpaceStations()
     sortedstations = sorter.sort_stations(stations)
     return sortedstations
-
-
-
-#caculates everyones score
-#params: dictionary of cards won, num agents
-#return list of scores
-#
-#may need to reorganize this to work with vizualizations
-"""def calculate_scores(cards_won, num_agents):
-    #total each players scores
-    score = [0]*num_agents
-    totals = []
-    for i in range(num_agents):
-        total = [0]*len(CATAGORIES)
-        if i in cards_won:
-            for card in cards_won[i]:
-                for j in range(len(CATAGORIES)):
-                    total[j] += card.getList()[j] 
-        totals.append(total)
-    
-    #calculate domination scores
-    dominations = []
-    for i in range(num_agents):
-        for j in range(i):
-            iWins = 0
-            jWins = 0
-            for k in range(5):
-                if totals[i][k] > totals[j][k]:
-                    iWins += 1
-                elif totals[i][k]<totals[j][k]:
-                    jWins += 1
-            if iWins > jWins:
-                score[i] += DOMINATE_POINTS
-                dominations.append((i, j))
-            elif jWins > iWins:
-                score[j] += DOMINATE_POINTS
-                dominations.append((j, i))
-                
-    #calculate scores based on largest total
-    catagories = [0]*len(CATAGORIES)
-    for i in range(len(CATAGORIES)):
-        highscore = -1
-        high_id = -1
-        for j in range(len(totals)):
-            if (totals[j][i] > highscore):
-                highscore = totals[j][i]
-                high_id = j
-        score[high_id] += HIGHEST_POINTS
-        catagories[i] = high_id
-        
-    UI.on_round_finished(score, dominations, catagories)
-    return score"""
-
             
 def main():
     print("hi")
