@@ -70,35 +70,27 @@ class AuctionGUI():
         self.buttons = Frame(self.left, bg="grey", bd=5)
         self.buttons.pack(side=BOTTOM, fill=X)
 
-        self.play_pause_button = Button(self.buttons, bg="#33ff33", text="PLAY",
-                                        width=10, activebackground="green")
-        self.step_button = Button(self.buttons, bg="#ffff33", text="STEP",
+        self.play_pause_button = Button(self.buttons, bg="green3", text="PLAY",
+                                        width=10, activebackground="green2")
+        self.step_button = Button(self.buttons, bg="yellow2", text="STEP",
                                   width=10, command=self.step, activebackground="yellow")
-        self.quit_button = Button(self.buttons, bg="#ff3333", text="QUIT",
+        self.quit_button = Button(self.buttons, bg="red2", text="QUIT",
                                   width=10, command=self.root.destroy, activebackground="red")
         self.legend_button = Button(self.buttons, bg="grey", text="LEGEND",
-                                  width=7, relief=GROOVE)
+                                  width=7, relief=GROOVE) #changed colors here -NM
 
         self.play_pause_button.pack(side=LEFT)
         self.step_button.pack(side=LEFT, padx=20)
         self.quit_button.pack(side=LEFT)
         self.legend_button.pack(side=RIGHT)
         
-        # bindings for [?] button
+        # bindings for legend_button button
         self.legend_button.bind('<Enter>', self.legend)
         self.legend_button.bind('<Leave>', self.remove_legend)
 
         # *RIGHT PANEL*
         self.right = Frame(self.root)
         self.right.pack(side=RIGHT, fill=Y)
-
-        
-        # current card
-        """
-        self.current = Canvas(self.right, width =(self.width),
-                              height=(self.height), bg="black")
-        self.current.pack(side=TOP)
-        """
 
         #card queue
         self.queue = Canvas(self.right, width=(self.width), bg="black", scrollregion=[0,0,self.width,(len(self.deck)-1)*70+self.height])
@@ -108,13 +100,12 @@ class AuctionGUI():
         self.queue.config(yscrollcommand=self.S2.set)
         self.S2.config(command=self.queue.yview)
 
+    # called when the step button is pressed
     def step(self):
         self.advance_queue()
         self.update_info()
-        
 
-    # I think this method should probably take card as an arg instead of
-    # searching the deck within the method, but we can discuss this -NM
+    # draws a card in the card queue
     def draw_card(self, card, index):
         # consider seperate method for this (duplicated in draw_cardlet) or a card method.
         num = 0
@@ -128,10 +119,10 @@ class AuctionGUI():
                 else:
                     icon2 = i
         y = index*70
-        self.create_rounded(self.queue, 0,y,180,y+190, 30, 1, "#202060", self.borders[(icon1+1)*(icon2+1)])# old color is "#ffc34d"
+        self.create_rounded(self.queue, 0,y,180,y+190, 30, 1, "#202060", self.borders[(icon1+1)*(icon2+1)])
         self.create_rounded(self.queue, 10,y+10,170,y+180, 20, 0, "#202060", "#202060")
         self.queue.create_text(90,y+20, anchor=N, fill=self.borders[(icon1+1)*(icon2+1)], width =150,
-                                text=card.getName(), font=("Helvetica", "16"),
+                                text=card.getName(), font=("Helvetica", "16", "bold"), #changed to bold NM
                                 justify=CENTER)
         
         if num == 1:
