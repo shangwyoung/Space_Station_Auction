@@ -178,7 +178,8 @@ class AuctionGUI():
         padding= barwidth/(num_stations/2)
         Lx=(barwidth*(index))+(padding/4)
         Rx=barwidth*(index+1)-(padding/4)
-        cord=(padding+Lx/2)+(barwidth*(index-1)-(barwidth*(index-1))/2)+padding-(padding/6)
+        cord=((Rx)/2)+(Lx/2)
+        #(padding+Lx/2)+(barwidth*(index-1)-(barwidth*(index-1))/2)+padding-(padding/6)
         
         
         scores = station.getScores(self.round)
@@ -188,11 +189,16 @@ class AuctionGUI():
 
 
         #scale font size for name
-        x = 22
+        x =int(barwidth/((len(station.getName()))*num_stations))+4
+        ##        for i in range ((len(station.getName()))):
+##            x= x - .5
+##        if x < 1:
+##            x= 10
+        #22
         
-        l = len(station.getName())
-        if l > 4:
-            x = int(20 - l/2)
+##        l = len(station.getName())
+##        if l > 4:
+##            x = int(20 - l/2)
 
         y= int((barwidth*2)/height)
 
@@ -252,7 +258,8 @@ class AuctionGUI():
         Rx = padding # right corner x value
         #Uy would be equal to the height; is agent-specific (is equivocal to bid)
         Lx = barwidth # left corner x value
-        #lower corners' y value is unchanging and always set at full 
+        #lower corners' y value is unchanging and always set at full
+        cord=((Rx)/2)+(Lx/2)
 
 
 
@@ -286,6 +293,7 @@ class AuctionGUI():
 
         barwidth= (width/(players))
         padding= barwidth/((players)/2)
+        
 
         for i in range(0,players):
             bar = 0
@@ -298,6 +306,7 @@ class AuctionGUI():
             Ly = height
             Rx = (barwidth*(i))+(padding/4)
             Ry = height
+            cord=((Rx)/2)+(Lx/2)
             
             iterations = 105
             increment = bar_size/iterations
@@ -324,9 +333,9 @@ class AuctionGUI():
                 else:
                    time.sleep(0.002)
             if bar_size < 35:
-                self.graph.create_text(((Lx-(barwidth/(2.55)))), height-bar_size-35, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
+                self.graph.create_text(cord, height-bar_size-35, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
             else:
-                self.graph.create_text(((Lx-(barwidth/(2.55)))), height-bar_size, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
+                self.graph.create_text(cord, height-bar_size, anchor=N, text="$" +str(bid), font=("Helvetica", "18", "bold"), fill="white")
             self.root.update()
 
     # displays a text message
