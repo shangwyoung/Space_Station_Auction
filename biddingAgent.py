@@ -43,6 +43,9 @@ class biddingAgent:
     # @param bids A list of all bids made by all agents, ordered by agent IDs
     def seeResults(self, card, winner, price, bids):
         pass
+        
+    def getBudget(self):
+    	pass
 
     def __repr__(self):
         return self.__class__.__name__

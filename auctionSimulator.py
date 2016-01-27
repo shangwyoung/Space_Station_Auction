@@ -14,7 +14,7 @@ import signal
 from contextlib import contextmanager
 
 # game constants
-NUM_ROUNDS = 10
+NUM_ROUNDS = 100
 STARTING_BUDGET = 1000
 CARDS_PER_AGENT = 5
 
@@ -83,7 +83,7 @@ def make_space_stations(agents):
         agent = agents[i]
         #name = agent.getName()
         #with time_limit(5, i, "__init__"):
-        stations[i] = space_station.SpaceStation(agent.getName(), i)
+        stations[i] = space_station.SpaceStation(agent)
         #print(stations[i].getName())
         #print(stations[i].getID())
     GUI.add_stations(stations)
@@ -205,7 +205,6 @@ def calculate_scores(cards_won, num_agents):
     return score
             
 def main():
-    print("hi")
 
     global GUI
     GUI = auction_gui.AuctionGUI(180, 190)
@@ -226,8 +225,8 @@ def main():
 
     #set up card generator
 
-    #card_generator = NickCardGenerator.NickCardGenerator(NUM_ROUNDS)
-    cards = card_generator.buildDeck(10)
+    
+    cards = card_generator.buildDeck(NUM_ROUNDS)
     GUI.add_deck(cards)
 
     
@@ -273,8 +272,8 @@ def main():
     
 
     UI.on_game_finished()
-    for i in range(num_agents):
-        print(str(space_stations[i].getName())+space_stations[i].getScores(NUM_ROUNDS))
+    #for i in range(num_agents):
+        #print(str(space_stations[i].getName())+space_stations[i].getScores(NUM_ROUNDS))
     GUI.root.mainloop()
 
 main()
