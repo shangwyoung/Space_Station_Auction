@@ -6,13 +6,13 @@ class agent1(biddingAgent.biddingAgent):
         self.budget = budget
 
     def getName(self):
-        return "A"
+        return "All In"
 
     def getColor(self):
-        return "green"
+        return "#24ee93"
 
     def getBid(self, card, index):
-        return 5000
+        return self.budget
 
     def seeResults(self, card, winner, price, bids):
         if winner == self.ID:
