@@ -11,10 +11,10 @@ class ProportionalBiddingAgent(biddingAgent.biddingAgent):
             self.total += sum(card.getStats())
 
     def getName(self):
-        return "Proportional Bidding Agent"
+        return "Proportional"
 
     def getColor(self):
-        return "Green"
+        return "#fe7329"
 
     # def init(self, cards, ID, players, budget):
     #    pass

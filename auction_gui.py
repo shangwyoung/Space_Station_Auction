@@ -115,7 +115,6 @@ class AuctionGUI():
             
         elif len(self.stations) == 2:
             self.give_result()
-
         
 
      # I think this method should probably take card as an arg instead of
@@ -186,22 +185,20 @@ class AuctionGUI():
         width = self.graph.winfo_width()
         height = self.graph.winfo_height()
 
-        players= num_stations
-        barwidth= width/(players)
-        padding= barwidth/(players/2)
-        Rx=(barwidth*(index))+(padding/4)
-        Lx=barwidth*(index+1)-(padding/4)
-        cord= (padding+Rx/2)+(barwidth*(index-1)-(barwidth*(index-1))/2)+padding-(padding/6)
+        barwidth= width/(num_stations)
+        padding= barwidth/(num_stations/2)
+        Lx=(barwidth*(index))+(padding/4)
+        Rx=barwidth*(index+1)-(padding/4)
+        cord=(padding+Lx/2)+(barwidth*(index-1)-(barwidth*(index-1))/2)+padding-(padding/6)
         
         
         scores = station.getScores(self.round)
-        tinybar=barwidth/10
-        barcord= Rx+tinybar
+        tinybar=barwidth/8
+        barcord= Lx+tinybar
         outline= "navy"
 
 
         #scale font size for name
-        
         x = 22
         
         l = len(station.getName())
@@ -210,11 +207,9 @@ class AuctionGUI():
 
         y= int((barwidth*2)/height)
 
-        self.graph.create_rectangle(Rx,height-160,Lx,height-5, fill="dark violet", outline="SlateBlue1", width=2)
+        self.graph.create_rectangle(Lx,height-160,Rx,height-5, fill="dark violet", outline="SlateBlue1", width=2)
         self.graph.create_text(cord,height-155, anchor=N, text="$"+str(station.getBudget(self.round)), font=("Helvetica", str(y)), fill= "SeaGreen1")
-        self.graph.create_text(cord,height-25, anchor=CENTER, text=station.getName(), font=("Helvetica", str(x)), width=90, fill="navy" )
-
-    
+        self.graph.create_text(cord,height-35, anchor=N, text=station.getName(), font=("Helvetica", str(x)), width=90, fill="navy" )
 
         if scores[0] > 0:
             self.graph.create_rectangle(barcord, height-40-(scores[0]*2), barcord+tinybar, height-40, fill=self.colors[0], outline=outline, width=2)
@@ -310,9 +305,9 @@ class AuctionGUI():
             color = stations[i].getColor()
             bar_size = ((bid/highest)*(height-10))
 
-            Lx = Lx=barwidth*(i+1)-(padding/4)#15 + i*95
+            Lx = barwidth*(i+1)-(padding/4)
             Ly = height
-            Rx = Rx=(barwidth*(i))+(padding/4)# 85 + i*95
+            Rx = (barwidth*(i))+(padding/4)
             Ry = height
             
             iterations = 105
@@ -424,30 +419,9 @@ class AuctionGUI():
                         text="$"+str(bids[i][1]), font=("Helvetica", "12"),
                         justify=CENTER))
             
-            #give card to the winner   
-            '''self.display.append(self.graph.create_rectangle(5+85*winner, 5, 85+85*winner, 60, fill="#19334d", outline="#00e5e6", width=3))
-            self.display.append(self.graph.create_text(45+85*winner, 40, anchor=N, fill="#00e5e6", width = 75,
-                        text="[" + str(self.card.getValue(0)) +
-                       ", " + str(self.card.getValue(1)) +
-                       ", " + str(self.card.getValue(2)) +
-                       ", " + str(self.card.getValue(3)) +
-                       ", " + str(self.card.getValue(4)) + "]", font=("Helvetica", "12"),
-                        justify=CENTER))
-            self.display.append(self.graph.create_text(45+85*winner, 20, anchor=N, fill="#00e5e6", width = 75,
-                        text="$"+str(price), font=("Helvetica", "12"),
-                        justify=CENTER))'''
-
-            '''#update total scores
-            for i in range (len(stations)):
-                self.display.append(self.graph.create_text(45+85*i, 240, anchor=N, fill="#00e5e6", width = 75,
-                        text=stations[i].getScores(self.round), font=("Helvetica", "12"),
-                        justify=CENTER))
-                
-            #update budgets
-            for i in range (len(stations)):
-                self.display.append(self.graph.create_text(45+85*i, 195, anchor=N, fill="#00e5e6", width = 75,
-                        text="$"+str(stations[i].getBudget(self.round)), font=("Helvetica", "12"),
-                        justify=CENTER))'''
+            #give card to the winner.
+            # TODO mabye?
+            
             self.graph.create_image(0,0, anchor=NW, image=self.img)
             for i in range(0, len(stations)):
                 self.draw_station(stations[i], i, len(stations))
@@ -456,8 +430,7 @@ class AuctionGUI():
 
             self.add_history("'"+stations[winner].getName()+"' won '"+self.card.getName()+"' for $"+str(price))
 
-            self.round += 1            
-                       
+            self.round += 1                        
 
     def add_stations(self, stations):
         if len(self.stations) == 0:
@@ -465,62 +438,8 @@ class AuctionGUI():
             #agent info
             for i in range(0, len(stations)):
                 self.draw_station(stations[i], i, len(stations))
-            """
-            self.graph.create_rectangle(5, 100, 85, 170, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(45, 130, anchor=N, fill="#00e5e6", width = 75,
-                            text=self.stations[0][0].getName(), font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_rectangle(90, 100, 170, 170, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(130, 130, anchor=N, fill="#00e5e6", width = 75,
-                            text=self.stations[0][1].getName(), font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_rectangle(175, 100, 255, 170, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(215, 130, anchor=N, fill="#00e5e6", width = 75,
-                            text=self.stations[0][2].getName(), font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_rectangle(260, 100, 340, 170, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(300, 130, anchor=N, fill="#00e5e6", width = 75,
-                            text=self.stations[0][3].getName(), font=("Helvetica", "12"),
-                            justify=CENTER)
-            #station info - unchanged
-            self.graph.create_rectangle(5, 165, 85, 270, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(45, 175, anchor=N, fill="#00e5e6", width = 75,
-                            text="Budget: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_text(45, 220, anchor=N, fill="#00e5e6", width = 75,
-                            text="Total Scores: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            
-            self.graph.create_rectangle(90, 165, 170, 270, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(130, 175, anchor=N, fill="#00e5e6", width = 75,
-                            text="Budget: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_text(130, 220, anchor=N, fill="#00e5e6", width = 75,
-                            text="Total Scores: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            
-            self.graph.create_rectangle(175, 165, 255, 270, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(215, 175, anchor=N, fill="#00e5e6", width = 75,
-                            text="Budget: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_text(215, 220, anchor=N, fill="#00e5e6", width = 75,
-                            text="Total Scores: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            
-            self.graph.create_rectangle(260, 165, 340, 270, fill="#19334d", outline="#00e5e6", width=3)
-            self.graph.create_text(300, 175, anchor=N, fill="#00e5e6", width = 75,
-                            text="Budget: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            self.graph.create_text(300, 220, anchor=N, fill="#00e5e6", width = 75,
-                            text="Total Scores: ", font=("Helvetica", "12"),
-                            justify=CENTER)
-            #station info - to be changed
-            """
-            
         else:
             self.stations.append(stations)
-
-        
 
     def add_deck(self, deck):
         self.deck = deck
@@ -560,5 +479,4 @@ class AuctionGUI():
             self.graph.create_image(600, 220, image=self.star2, anchor=W)
             self.graph.create_image(600, 260, image=self.star3, anchor=W)
             self.stations.remove(self.stations[1])
-
 

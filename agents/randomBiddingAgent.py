@@ -7,10 +7,10 @@ class RandomBiddingAgent(biddingAgent.biddingAgent):
         self.budget = budget
 
     def getName(self):
-        return "Random Bidding Agent"
+        return "Random"
 
     def getColor(self):
-        return "Blue"
+        return "#245993"
 
     # def init(self, cards, ID, players, budget):
     #    pass

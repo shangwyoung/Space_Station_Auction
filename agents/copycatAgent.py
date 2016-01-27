@@ -8,10 +8,10 @@ class CopycatAgent(biddingAgent.biddingAgent):
         self.lastPrice = 0
 
     def getName(self):
-        return "Copycat Bidding Agent"
+        return "Copycat"
 
     def getColor(self):
-        return "Red"
+        return "#fe1e66"
 
     # def init(self, cards, ID, players, budget):
     #    pass
